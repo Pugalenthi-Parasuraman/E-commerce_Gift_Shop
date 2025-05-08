@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "futura-medium";
+    src: url(../../public//fonts/futura_medium.woff2) format(woff2);
+  }
+}
+
+body {
+  @apply bg-gray-200;
+}
+
+@layer components {
+  .sub-menu {
+    @apply absolute top-11 p-[15px] rounded-[6px] origin-[50%_-170px] backdrop-blur bg-white/[0.60];
+  }
+  .step {
+    @apply px-4 py-2 text-gray-500 font-bold text-sm uppercase tracking-wide cursor-default;
+  }
+
+  .active-step {
+    @apply bg-orange-500 text-white border-white border-2 ;
+  }
+
+  .incomplete {
+    @apply bg-gray-300 ;
+  }
+
+}
+
+
+@layer utilities {
+  .flex-center {
+    @apply flex items-center;
+  }
+  .nav-menu button {
+    @apply relative flex justify-center items-center hover:text-black tracking-[1px];
+  }
+  .nav-menu button::after {
+    @apply content-[''] bg-black h-[3px] w-[0%] right-0 -bottom-[5px] absolute rounded-xl duration-300;
+  }
+  .nav-menu button:hover::after {
+    @apply w-[100%] left-0;
+  }
+  .nav-list span::after {
+    @apply content-[''] bg-black h-[3px] w-[0%] right-0 -bottom-[5px] absolute rounded-xl duration-300;
+  }
+  .nav-list span:hover::after {
+    @apply w-[100%] left-0;
+  }
+  .flex-center-around {
+    @apply flex items-center justify-around;
+  }
+  .flex-center-between {
+    @apply flex items-center justify-between;
+  }
+  .shadow-card {
+    box-shadow: 5px 5px 8px theme("colors.gray.700");
+  }
+    .pagination {
+    display: flex;
+    align-items: center;
+  }
+}
