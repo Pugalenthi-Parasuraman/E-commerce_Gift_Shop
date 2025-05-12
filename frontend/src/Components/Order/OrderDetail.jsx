@@ -14,15 +14,26 @@ function OrderDetail() {
     totalPrice = 0,
     paymentInfo = {},
     customOrderId = "",
+    statusHistory = [],
   } = orderDetail;
 
   const isPaid = paymentInfo && paymentInfo.status === "succeeded";
   const dispatch = useDispatch();
   const { id } = useParams();
 
+  // Polling every 10 seconds for live updates
   useEffect(() => {
     dispatch(orderDetailAction(id));
+
+    const interval = setInterval(() => {
+      dispatch(orderDetailAction(id));
+    }, 10000); // 10s
+
+    return () => clearInterval(interval);
   }, [id, dispatch]);
+
+  const steps = ["Processing", "Shipped", "Out for Delivery", "Delivered"];
+  const currentStepIndex = steps.indexOf(orderStatus);
 
   return (
     <Fragment>
@@ -37,6 +48,48 @@ function OrderDetail() {
                 `ORD-${orderDetail._id?.slice(-4).toUpperCase()}`}
             </h1>
 
+            {/* Live Order Tracking Stepper */}
+            <h4 className="text-lg font-semibold mt-6 mb-3">
+              Live Order Tracking
+            </h4>
+            <div className="flex items-center space-x-4 mb-6">
+              {steps.map((step, index) => {
+                const isDone = index <= currentStepIndex;
+                return (
+                  <div key={step} className="flex flex-col items-center">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        isDone
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-300 text-gray-700"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <p className="text-xs mt-1 text-center">{step}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Optional: Tracking Timeline */}
+            {statusHistory?.length > 0 && (
+              <>
+                <h4 className="text-lg font-semibold mt-6 mb-2">
+                  Tracking Timeline
+                </h4>
+                <ul className="space-y-1 mb-6">
+                  {statusHistory.map((item, i) => (
+                    <li key={i} className="text-sm">
+                      ✅ <b>{item.status}</b> at{" "}
+                      {new Date(item.updatedAt).toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {/* Order Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold mb-3">Shipping Info</h4>

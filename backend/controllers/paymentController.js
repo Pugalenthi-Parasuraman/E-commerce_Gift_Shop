@@ -2,8 +2,8 @@ const catchAsyncError = require("../middlewares/catchAsnycErrors");
 const Razorpay = require("razorpay");
 
 const razorpay = new Razorpay({
-  key_id: "%YOUR_STRIPE_PUBLIC_KEY%",
-  key_secret: "%YOUR_STRIPE_SECRET_KEY%",
+  key_id: "rzp_test_VBQSaYdZ0LK5WN",
+  key_secret: "DRwiDJzlomiHlnXgN48VLZMQ",
 });
 
 const processPayment = catchAsyncError(async (req, res, next) => {

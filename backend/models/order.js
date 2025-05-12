@@ -94,6 +94,13 @@ const orderSchema = mongoose.Schema({
       type: String,
       required: true,
     },
+    liveLocation: {
+      type: {
+        latitude: { type: Number },
+        longitude: { type: Number },
+      },
+      default: null,
+    },
   },
   paymentMethod: {
     type: String,

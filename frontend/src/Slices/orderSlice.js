@@ -11,148 +11,106 @@ const orderSlice = createSlice({
     isOrderDeleted: false,
     isOrderUpdated: false,
     error: null,
+    currentLocation: null, 
   },
   reducers: {
-    createOrderRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+ 
+    createOrderRequest(state) {
+      state.loading = true;
     },
     createOrderSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        orderDetail: action.payload.order,
-      };
+      state.loading = false;
+      state.orderDetail = action.payload.order;
     },
     createOrderFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
-    clearError(state, action) {
-      return {
-        ...state,
-        error: null,
-      };
-    },
-    userOrdersRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+
+    userOrdersRequest(state) {
+      state.loading = true;
     },
     userOrdersSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        userOrders: action.payload.orders,
-      };
+      state.loading = false;
+      state.userOrders = action.payload.orders;
     },
     userOrdersFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
-    orderDetailRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+
+  
+    orderDetailRequest(state) {
+      state.loading = true;
     },
     orderDetailSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        orderDetail: action.payload.order,
-      };
+      state.loading = false;
+      state.orderDetail = action.payload.order;
     },
     orderDetailFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
-    adminOrdersRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+
+    adminOrdersRequest(state) {
+      state.loading = true;
     },
     adminOrdersSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        adminOrders: action.payload.orders,
-      };
+      state.loading = false;
+      state.adminOrders = action.payload.orders;
     },
     adminOrdersFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
 
-    deleteOrderRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+    deleteOrderRequest(state) {
+      state.loading = true;
     },
-    deleteOrderSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        isOrderDeleted: true,
-      };
+    deleteOrderSuccess(state) {
+      state.loading = false;
+      state.isOrderDeleted = true;
     },
     deleteOrderFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
 
-    updateOrderRequest(state, action) {
-      return {
-        ...state,
-        loading: true,
-      };
+  
+    updateOrderRequest(state) {
+      state.loading = true;
     },
-    updateOrderSuccess(state, action) {
-      return {
-        ...state,
-        loading: false,
-        isOrderUpdated: true,
-      };
+    updateOrderSuccess(state) {
+      state.loading = false;
+      state.isOrderUpdated = true;
     },
     updateOrderFail(state, action) {
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
+      state.loading = false;
+      state.error = action.payload;
     },
 
-    clearOrderDeleted(state, action) {
-      return {
-        ...state,
-        isOrderDeleted: false,
-      };
+   
+    updateLiveLocation(state, action) {
+      state.currentLocation = action.payload;
     },
-    clearOrderUpdated(state, action) {
-      return {
-        ...state,
-        isOrderUpdated: false,
-      };
+
+  
+    clearLiveLocation(state) {
+      state.currentLocation = null;
+    },
+
+    clearOrderDeleted(state) {
+      state.isOrderDeleted = false;
+    },
+
+ 
+    clearOrderUpdated(state) {
+      state.isOrderUpdated = false;
+    },
+
+   
+    clearError(state) {
+      state.error = null;
     },
   },
 });
@@ -163,7 +121,6 @@ export const {
   createOrderFail,
   createOrderSuccess,
   createOrderRequest,
-  clearError,
   userOrdersFail,
   userOrdersSuccess,
   userOrdersRequest,
@@ -179,8 +136,11 @@ export const {
   updateOrderFail,
   updateOrderRequest,
   updateOrderSuccess,
+  updateLiveLocation,
+  clearLiveLocation,
   clearOrderDeleted,
   clearOrderUpdated,
+  clearError,
 } = actions;
 
 export default reducer;

@@ -3,6 +3,7 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 const ErrorHandler = require("../utils/errorHandler");
 const Counter = require("../models/counter");
+const { sendEmail } = require("../utils/email");
 
 // Create New Order - api/v1/order/new
 const newOrder = catchAsyncError(async (req, res, next) => {
@@ -15,9 +16,10 @@ const newOrder = catchAsyncError(async (req, res, next) => {
     totalPrice,
     paymentInfo,
     paymentMethod,
+    liveLocation,
   } = req.body;
 
-  // Validate online payment
+
   if (
     paymentMethod === "online" &&
     (!paymentInfo || paymentInfo.status !== "successed")
@@ -25,7 +27,7 @@ const newOrder = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Online payment not completed.", 400));
   }
 
-  // Generate custom order ID
+
   const counter = await Counter.findOneAndUpdate(
     { userId: req.user.id },
     { $inc: { seq: 1 } },
@@ -34,7 +36,7 @@ const newOrder = catchAsyncError(async (req, res, next) => {
 
   const customOrderId = `RUDRA-${String(counter.seq).padStart(2, "0")}`;
 
-  // Create order with custom ID
+
   const order = await Order.create({
     orderItems,
     shippingInfo,
@@ -47,6 +49,14 @@ const newOrder = catchAsyncError(async (req, res, next) => {
     paymentMethod,
     paidAt: paymentMethod === "online" ? Date.now() : null,
     customOrderId,
+    liveLocation,
+  });
+
+  const user = await User.findById(req.user.id); 
+  sendEmail({
+    email: user.email,
+    subject: "Order Placed Successfully",
+    message: `Your order with ID ${customOrderId} has been successfully placed. We will notify you on any updates.`,
   });
 
   res.status(200).json({
@@ -55,6 +65,25 @@ const newOrder = catchAsyncError(async (req, res, next) => {
       ...order.toObject(),
       displayId: customOrderId,
     },
+  });
+});
+
+// Update Live Location - api/v1/order/live-location/:id
+const updateLiveLocation = catchAsyncError(async (req, res, next) => {
+  const { latitude, longitude } = req.body;
+
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return next(new ErrorHandler("Order not found", 404));
+  }
+
+  order.liveLocation = { latitude, longitude };
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Live location updated",
+    location: order.liveLocation,
   });
 });
 
@@ -103,6 +132,7 @@ const orders = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Format order response
 function formatOrderResponse(order) {
   return {
     ...order.toObject(),
@@ -146,6 +176,7 @@ const updateOrder = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// Update stock
 async function updateStock(productId, quantity) {
   const product = await Product.findById(productId);
   product.stock -= quantity;
@@ -170,6 +201,7 @@ const deleteOrder = catchAsyncError(async (req, res, next) => {
 });
 
 module.exports = {
+  updateLiveLocation,
   newOrder,
   getSingleOrder,
   myOrders,

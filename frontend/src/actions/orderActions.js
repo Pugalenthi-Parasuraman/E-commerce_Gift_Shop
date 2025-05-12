@@ -16,11 +16,45 @@ import {
   deleteOrderSuccess,
   updateOrderFail,
   updateOrderRequest,
-  updateOrderSuccess
+  updateOrderSuccess,
+  updateLiveLocation,
+  clearLiveLocation,
 } from "../Slices/orderSlice";
 import axios from "axios";
 
 
+// Function to track live location and dispatch to Redux
+export const trackLiveLocation = () => async (dispatch) => {
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          timestamp: new Date().toISOString(),
+        };
+        dispatch(updateLiveLocation(location)); // Dispatch to update live location in Redux store
+      },
+      (error) => {
+        console.error("Error tracking location: ", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      }
+    );
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+};
+
+// Clear live location when needed
+export const clearLocation = () => async (dispatch) => {
+  dispatch(clearLiveLocation()); // Dispatch action to clear live location
+};
+
+// Create order
 export const createOrder = (order) => async (dispatch) => {
   try {
     dispatch(createOrderRequest());
@@ -30,6 +64,8 @@ export const createOrder = (order) => async (dispatch) => {
     dispatch(createOrderFail(error.response.data.message));
   }
 };
+
+// Get user orders
 export const userOrders = () => async (dispatch) => {
   try {
     dispatch(userOrdersRequest());
@@ -40,6 +76,7 @@ export const userOrders = () => async (dispatch) => {
   }
 };
 
+// Get order details
 export const orderDetail = (id) => async (dispatch) => {
   try {
     dispatch(orderDetailRequest());
@@ -50,12 +87,13 @@ export const orderDetail = (id) => async (dispatch) => {
   }
 };
 
+// Get admin orders
 export const adminOrders = () => async (dispatch) => {
   try {
     dispatch(adminOrdersRequest());
     const { data } = await axios.get(`/api/v1/admin/orders`, {
       headers: {
-        "Cache-Control": "no-cache", 
+        "Cache-Control": "no-cache",
         Pragma: "no-cache",
         Expires: "0",
       },
@@ -68,7 +106,7 @@ export const adminOrders = () => async (dispatch) => {
   }
 };
 
-
+// Delete order
 export const deleteOrder = (id) => async (dispatch) => {
   try {
     dispatch(deleteOrderRequest());
@@ -79,6 +117,7 @@ export const deleteOrder = (id) => async (dispatch) => {
   }
 };
 
+// Update order
 export const updateOrder = (id, orderData) => async (dispatch) => {
   try {
     dispatch(updateOrderRequest());
