@@ -7,6 +7,7 @@ import {
   Marker,
   Popup,
   Polyline,
+  useMap,
 } from "react-leaflet";
 import L from "leaflet";
 import {
@@ -15,9 +16,10 @@ import {
   orderDetail,
 } from "../../actions/orderActions";
 import { toast } from "react-toastify";
-import "../../Styles/Home.css"
+import "leaflet/dist/leaflet.css";
+import "../../Styles/Home.css";
 
-
+// Fix default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -28,94 +30,160 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
+const blueIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+const greenIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+const redIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+const AutoFitBounds = ({ points }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (points.length > 1) {
+      map.fitBounds(points);
+    }
+  }, [points, map]);
+  return null;
+};
+
 const LiveLocationPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const mapRef = useRef(null);
 
-  const { order, loading, error } = useSelector((state) => state.orderState);
-  const { liveLocation } = useSelector((state) => state.orderState);
-  const [pathHistory, setPathHistory] = useState([]);
-  const [isTracking, setIsTracking] = useState(false);
+  const {
+    orderDetail: order,
+    error,
+    liveLocation,
+  } = useSelector((state) => state.orderState);
 
+  const [isTracking, setIsTracking] = useState(false);
+  const chennai = [13.0827, 80.2707];
+
+  const live =
+    liveLocation?.latitude && liveLocation?.longitude
+      ? [liveLocation.latitude, liveLocation.longitude]
+      : null;
+
+  const delivery = order?.shippingInfo?.coordinates
+    ? [
+        order.shippingInfo.coordinates.latitude,
+        order.shippingInfo.coordinates.longitude,
+      ]
+    : null;
+
+  const midpoint =
+    live && live.length === 2
+      ? [(chennai[0] + live[0]) / 2, (chennai[1] + live[1]) / 2]
+      : null;
+
+  const center =
+    order?.orderStatus === "Shipped" && midpoint
+      ? midpoint
+      : order?.orderStatus === "Delivered" && delivery
+      ? delivery
+      : chennai;
+
+  const trackIntervalRef = useRef(null);
 
   useEffect(() => {
     dispatch(orderDetail(id));
   }, [dispatch, id]);
 
-  
   useEffect(() => {
     if (isTracking) {
-      dispatch(trackLiveLocation());
+      dispatch(trackLiveLocation(id));
+      trackIntervalRef.current = setInterval(() => {
+        dispatch(trackLiveLocation(id));
+      }, 10000);
     } else {
+      clearInterval(trackIntervalRef.current);
       dispatch(clearLocation());
-      setPathHistory([]);
     }
-  }, [isTracking, dispatch]);
+    return () => clearInterval(trackIntervalRef.current);
+  }, [isTracking, dispatch, id]);
 
- 
   useEffect(() => {
-    if (liveLocation) {
-      setPathHistory((prev) => [
-        ...prev,
-        [liveLocation.latitude, liveLocation.longitude],
-      ]);
-
-     
-      if (mapRef.current) {
-        mapRef.current.flyTo(
-          [liveLocation.latitude, liveLocation.longitude],
-          15
-        );
-      }
-    }
-  }, [liveLocation]);
-
- 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
+    if (error) toast.error(error);
   }, [error]);
 
-  if (loading)
-    return <div className="text-center py-8">Loading order details...</div>;
-  if (!order) return <div className="text-center py-8">Order not found</div>;
+  const isValidCoords = (coords) =>
+    Array.isArray(coords) &&
+    coords.length === 2 &&
+    typeof coords[0] === "number" &&
+    typeof coords[1] === "number";
 
-  
-  const initialCenter = order.shippingInfo?.coordinates
-    ? [
-        order.shippingInfo.coordinates.latitude,
-        order.shippingInfo.coordinates.longitude,
-      ]
-    : [20.5937, 78.9629]; 
+  const points = [chennai];
+  if (order?.orderStatus === "Shipped" && isValidCoords(midpoint)) {
+    points.push(midpoint);
+    if (isValidCoords(delivery)) points.push(delivery);
+  } else if (order?.orderStatus === "Delivered" && isValidCoords(delivery)) {
+    points.push(delivery);
+  } else if (order?.orderStatus === "Processing" && isValidCoords(delivery)) {
+    points.push(delivery);
+  }
+
+  // Format timestamp
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return null;
+    const date = new Date(timestamp);
+    return date.toLocaleString("en-IN", {
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h1 className="text-2xl font-bold mb-2">
-          Order #{order.customOrderId || order._id}
+          Order #
+          {order?.customOrderId || `ORD-${order?._id?.slice(-6).toUpperCase()}`}
         </h1>
-        <p className="text-gray-600 mb-4">
-          Tracking Number: {order.trackingNumber}
+        <p className="text-gray-600 mb-2">
+          Tracking Number: {order?.trackingNumber || "N/A"}
         </p>
-
-        <div className="flex flex-wrap items-center justify-between mb-4">
+        {isTracking && liveLocation?.timestamp && (
+          <p className="text-red-600 font-semibold mb-2">
+            📍 Last updated: {formatTimestamp(liveLocation.timestamp)}
+          </p>
+        )}
+        <div className="flex justify-between items-center">
           <div>
             <h2 className="text-lg font-semibold mb-2">Current Status</h2>
-            <div
+            <span
               className={`px-4 py-2 rounded-md inline-block ${
-                order.orderStatus === "Delivered"
+                order?.orderStatus === "Delivered"
                   ? "bg-green-100 text-green-800"
-                  : order.orderStatus === "Out for Delivery"
+                  : order?.orderStatus === "Shipped"
                   ? "bg-blue-100 text-blue-800"
                   : "bg-yellow-100 text-yellow-800"
               }`}
             >
-              {order.orderStatus}
-            </div>
+              {order?.orderStatus || "Unknown"}
+            </span>
           </div>
-
           <button
             onClick={() => setIsTracking(!isTracking)}
             className={`px-4 py-2 rounded-md text-white ${
@@ -130,120 +198,98 @@ const LiveLocationPage = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Delivery Tracking</h2>
-        <div className="h-96 rounded-md overflow-hidden relative">
+        <h2 className="text-xl font-semibold mb-4">Live Location Map</h2>
+        <div className="h-96 rounded overflow-hidden relative">
           <MapContainer
-            center={initialCenter}
+            center={center}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
-            whenCreated={(map) => {
-              mapRef.current = map;
-            }}
+            whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution="&copy; OpenStreetMap contributors"
             />
+            <AutoFitBounds points={points} />
 
-            {order.shippingInfo?.coordinates && (
-              <Marker
-                position={[
-                  order.shippingInfo.coordinates.latitude,
-                  order.shippingInfo.coordinates.longitude,
-                ]}
-              >
-                <Popup>Delivery Address</Popup>
-              </Marker>
+            {/* Processing */}
+            {order?.orderStatus === "Processing" && isValidCoords(delivery) && (
+              <>
+                <Marker position={chennai} icon={blueIcon}>
+                  <Popup>Processing Center - Chennai</Popup>
+                </Marker>
+                <Marker position={delivery} icon={redIcon}>
+                  <Popup>Expected Delivery Location</Popup>
+                </Marker>
+                <Polyline
+                  positions={[chennai, delivery]}
+                  color="blue"
+                  weight={4}
+                  dashArray="4,8"
+                />
+              </>
             )}
 
-           
-            {liveLocation && (
-              <Marker
-                position={[liveLocation.latitude, liveLocation.longitude]}
-              >
-                <Popup>
-                  <div>
-                    <p className="font-semibold">Delivery Personnel</p>
-                    <p>
-                      Last updated:{" "}
-                      {new Date(liveLocation.timestamp).toLocaleTimeString()}
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
+            {/* Shipped */}
+            {order?.orderStatus === "Shipped" && (
+              <>
+                <Marker position={chennai} icon={blueIcon}>
+                  <Popup>Chennai</Popup>
+                </Marker>
+                {isValidCoords(midpoint) && (
+                  <>
+                    <Marker position={midpoint} icon={greenIcon}>
+                      <Popup>Midpoint</Popup>
+                    </Marker>
+                    <Polyline
+                      positions={[chennai, midpoint]}
+                      color="gray"
+                      weight={4}
+                      dashArray="5,10"
+                    />
+                  </>
+                )}
+                {isValidCoords(midpoint) && isValidCoords(delivery) && (
+                  <>
+                    <Marker position={delivery} icon={redIcon}>
+                      <Popup>Destination</Popup>
+                    </Marker>
+                    <Polyline
+                      positions={[midpoint, delivery]}
+                      color="red"
+                      weight={4}
+                    />
+                  </>
+                )}
+              </>
             )}
 
-           
-            {pathHistory.length > 1 && (
-              <Polyline
-                positions={pathHistory}
-                color="blue"
-                weight={3}
-                opacity={0.7}
-              />
+            {/* Delivered */}
+            {order?.orderStatus === "Delivered" && isValidCoords(delivery) && (
+              <>
+                <Marker position={chennai} icon={blueIcon}>
+                  <Popup>Origin - Chennai</Popup>
+                </Marker>
+                <Marker position={delivery} icon={redIcon}>
+                  <Popup>Delivered</Popup>
+                </Marker>
+                <Polyline
+                  positions={[chennai, delivery]}
+                  color="gray"
+                  weight={4}
+                  dashArray="4,8"
+                />
+              </>
             )}
           </MapContainer>
 
-          {isTracking && !liveLocation && (
+          {isTracking && !live && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="bg-white p-4 rounded-md">
                 <p className="text-center">Waiting for location updates...</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Make sure location services are enabled
-                </p>
               </div>
             </div>
           )}
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold mb-2">Tracking Information</h3>
-          {liveLocation ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Latitude</p>
-                <p className="font-medium">
-                  {liveLocation.latitude.toFixed(6)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Longitude</p>
-                <p className="font-medium">
-                  {liveLocation.longitude.toFixed(6)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Last Updated</p>
-                <p className="font-medium">
-                  {new Date(liveLocation.timestamp).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <p className="text-gray-500">
-              Live location tracking is currently inactive
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Order Items</h2>
-        <div className="divide-y divide-gray-200">
-          {order.orderItems.map((item, index) => (
-            <div key={index} className="py-4 flex items-center">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-16 h-16 object-cover rounded-md mr-4"
-              />
-              <div className="flex-grow">
-                <h3 className="font-medium">{item.name}</h3>
-                <p className="text-gray-600">Quantity: {item.quantity}</p>
-              </div>
-              <p className="font-semibold">₹{item.price}</p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

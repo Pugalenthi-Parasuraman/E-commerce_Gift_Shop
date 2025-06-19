@@ -82,6 +82,19 @@ export default function UserOrders() {
       ),
       center: true,
     },
+    {
+      name: "Track",
+      cell: (row) => (
+        <Link
+          to={`/order/location/${row._id}`}
+          className="text-green-500 hover:text-green-700 flex justify-center"
+          title="Track Live Location"
+        >
+          📍
+        </Link>
+      ),
+      center: true,
+    },
   ];
 
   const customStyles = {

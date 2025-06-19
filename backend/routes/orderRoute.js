@@ -11,6 +11,6 @@ router.get("/myorders", isAuthenticatedUser, orderController.myOrders);
 router.get("/admin/orders", isAuthenticatedUser, authorizeRoles('admin'), orderController.orders);
 router.put("/admin/order/:id", isAuthenticatedUser, authorizeRoles('admin'), orderController.updateOrder);
 router.delete("/admin/order/:id", isAuthenticatedUser, authorizeRoles('admin'), orderController.deleteOrder);
-router.put("/order/:id/location", isAuthenticatedUser, orderController.updateLiveLocation);
+router.put("/order/location/:id", isAuthenticatedUser, orderController.updateLiveLocation);
 
 module.exports = router;

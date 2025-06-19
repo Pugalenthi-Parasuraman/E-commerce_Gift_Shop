@@ -1,8 +1,10 @@
+// OrderDetail.js
 import { Fragment, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../Reausable/Topnavbar/Loader";
 import { orderDetail as orderDetailAction } from "../../actions/orderActions";
+import LiveLocationPage from "./UserLocation";
 
 function OrderDetail() {
   const { orderDetail, loading } = useSelector((state) => state.orderState);
@@ -21,13 +23,12 @@ function OrderDetail() {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  // Polling every 10 seconds for live updates
   useEffect(() => {
     dispatch(orderDetailAction(id));
 
     const interval = setInterval(() => {
       dispatch(orderDetailAction(id));
-    }, 10000); // 10s
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [id, dispatch]);
@@ -43,12 +44,11 @@ function OrderDetail() {
         <div className="max-w-6xl mx-auto p-4">
           <div className="bg-white shadow-md rounded-lg p-6">
             <h1 className="text-2xl font-bold mb-5">
-              Order #{" "}
+              Order #
               {customOrderId ||
                 `ORD-${orderDetail._id?.slice(-4).toUpperCase()}`}
             </h1>
 
-            {/* Live Order Tracking Stepper */}
             <h4 className="text-lg font-semibold mt-6 mb-3">
               Live Order Tracking
             </h4>
@@ -72,7 +72,6 @@ function OrderDetail() {
               })}
             </div>
 
-            {/* Optional: Tracking Timeline */}
             {statusHistory?.length > 0 && (
               <>
                 <h4 className="text-lg font-semibold mt-6 mb-2">
@@ -89,7 +88,6 @@ function OrderDetail() {
               </>
             )}
 
-            {/* Order Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold mb-3">Shipping Info</h4>
@@ -163,7 +161,6 @@ function OrderDetail() {
             <hr className="my-6 border-gray-300" />
 
             <h4 className="text-lg font-semibold mb-4">Order Items</h4>
-
             {orderItems &&
               orderItems.map((item) => (
                 <div
@@ -209,6 +206,7 @@ function OrderDetail() {
           </div>
         </div>
       )}
+
     </Fragment>
   );
 }

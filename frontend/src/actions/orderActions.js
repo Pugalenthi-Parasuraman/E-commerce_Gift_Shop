@@ -23,20 +23,27 @@ import {
 import axios from "axios";
 
 
-// Function to track live location and dispatch to Redux
-export const trackLiveLocation = () => async (dispatch) => {
+export const trackLiveLocation = (orderId) => async (dispatch) => {
   if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
-      (position) => {
+      async (position) => {
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           timestamp: new Date().toISOString(),
         };
-        dispatch(updateLiveLocation(location)); // Dispatch to update live location in Redux store
+
+       
+        dispatch(updateLiveLocation(location));
+
+        try {
+          await axios.put(`/api/v1/order/location/${orderId}`, location);
+        } catch (error) {
+          console.error("MongoDB update failed:", error.message);
+        }
       },
       (error) => {
-        console.error("Error tracking location: ", error);
+        console.error("Error tracking location:", error.message);
       },
       {
         enableHighAccuracy: true,
@@ -49,12 +56,12 @@ export const trackLiveLocation = () => async (dispatch) => {
   }
 };
 
-// Clear live location when needed
+// ❌ Clear live location
 export const clearLocation = () => async (dispatch) => {
-  dispatch(clearLiveLocation()); // Dispatch action to clear live location
+  dispatch(clearLiveLocation());
 };
 
-// Create order
+// 🛒 Create Order
 export const createOrder = (order) => async (dispatch) => {
   try {
     dispatch(createOrderRequest());
@@ -65,7 +72,7 @@ export const createOrder = (order) => async (dispatch) => {
   }
 };
 
-// Get user orders
+// 🧾 User Orders
 export const userOrders = () => async (dispatch) => {
   try {
     dispatch(userOrdersRequest());
@@ -76,7 +83,7 @@ export const userOrders = () => async (dispatch) => {
   }
 };
 
-// Get order details
+// 📦 Get Order Detail
 export const orderDetail = (id) => async (dispatch) => {
   try {
     dispatch(orderDetailRequest());
@@ -87,7 +94,7 @@ export const orderDetail = (id) => async (dispatch) => {
   }
 };
 
-// Get admin orders
+// 👨‍💼 Admin - All Orders
 export const adminOrders = () => async (dispatch) => {
   try {
     dispatch(adminOrdersRequest());
@@ -106,7 +113,7 @@ export const adminOrders = () => async (dispatch) => {
   }
 };
 
-// Delete order
+// ❌ Delete Order
 export const deleteOrder = (id) => async (dispatch) => {
   try {
     dispatch(deleteOrderRequest());
@@ -117,7 +124,7 @@ export const deleteOrder = (id) => async (dispatch) => {
   }
 };
 
-// Update order
+// ✏️ Update Order
 export const updateOrder = (id, orderData) => async (dispatch) => {
   try {
     dispatch(updateOrderRequest());

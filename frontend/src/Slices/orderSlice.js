@@ -11,10 +11,10 @@ const orderSlice = createSlice({
     isOrderDeleted: false,
     isOrderUpdated: false,
     error: null,
-    currentLocation: null, 
+    liveLocation: null, // ✅ live location state (lat, long, timestamp)
   },
   reducers: {
- 
+    // Order Creation
     createOrderRequest(state) {
       state.loading = true;
     },
@@ -27,6 +27,7 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
+    // User Orders
     userOrdersRequest(state) {
       state.loading = true;
     },
@@ -39,7 +40,7 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
-  
+    // Order Detail
     orderDetailRequest(state) {
       state.loading = true;
     },
@@ -52,6 +53,7 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
+    // Admin Orders
     adminOrdersRequest(state) {
       state.loading = true;
     },
@@ -64,6 +66,7 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
+    // Delete Order
     deleteOrderRequest(state) {
       state.loading = true;
     },
@@ -76,7 +79,7 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
-  
+    // Update Order
     updateOrderRequest(state) {
       state.loading = true;
     },
@@ -89,26 +92,21 @@ const orderSlice = createSlice({
       state.error = action.payload;
     },
 
-   
+    // ✅ Track Live Location
     updateLiveLocation(state, action) {
-      state.currentLocation = action.payload;
+      state.liveLocation = action.payload; // { latitude, longitude, timestamp }
     },
-
-  
     clearLiveLocation(state) {
-      state.currentLocation = null;
+      state.liveLocation = null;
     },
 
+    // Utilities
     clearOrderDeleted(state) {
       state.isOrderDeleted = false;
     },
-
- 
     clearOrderUpdated(state) {
       state.isOrderUpdated = false;
     },
-
-   
     clearError(state) {
       state.error = null;
     },
@@ -136,7 +134,7 @@ export const {
   updateOrderFail,
   updateOrderRequest,
   updateOrderSuccess,
-  updateLiveLocation,
+  updateLiveLocation, 
   clearLiveLocation,
   clearOrderDeleted,
   clearOrderUpdated,

@@ -30,6 +30,7 @@ import axios from "axios";
 import OrderSuccess from "./Components/Cart/OrderSuccess.jsx";
 import UserOrders from "./Components/Order/UserOrders.jsx";
 import OrderDetail from "./Components/Order/OrderDetail.jsx";
+import UserLocation from "./Components/Order/UserLocation.jsx"
 import Dashboard from "./Components/AdminPanel/Dashboard.jsx";
 import ProductList from "./Components/AdminPanel/Productlist.jsx";
 import NewProduct from "./Components/AdminPanel/NewProduct.jsx";
@@ -91,6 +92,7 @@ const isAdminPage = location.pathname.startsWith("/admin");
             <Route path="/order/success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>}/>
             <Route path="/orders" element={<ProtectedRoute><UserOrders /></ProtectedRoute>}/>
             <Route path="/order/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>}/>
+            <Route path="/order/location/:id" element={<ProtectedRoute><UserLocation /></ProtectedRoute>}/>
             <Route path="/payment" element={<ProtectedRoute><Payment razorpayApiKey={razorpayApiKey} /></ProtectedRoute>}/>
           </Routes>
         </div>

@@ -6,7 +6,7 @@ export default function ProductReply({ reviews, onReplySubmit }) {
   const handleReplySubmit = () => {
     if (replyText.trim()) {
       onReplySubmit(replyText);
-      setReplyText(""); // Clear input field after submission
+      setReplyText(""); 
     }
   };
 

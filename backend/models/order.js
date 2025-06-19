@@ -26,6 +26,16 @@ const orderSchema = mongoose.Schema({
       type: String,
       required: true,
     },
+    coordinates: {
+      latitude: {
+        type: Number,
+        default: null,
+      },
+      longitude: {
+        type: Number,
+        default: null,
+      },
+    },
   },
   user: {
     type: mongoose.SchemaTypes.ObjectId,
@@ -93,13 +103,6 @@ const orderSchema = mongoose.Schema({
     status: {
       type: String,
       required: true,
-    },
-    liveLocation: {
-      type: {
-        latitude: { type: Number },
-        longitude: { type: Number },
-      },
-      default: null,
     },
   },
   paymentMethod: {

@@ -68,6 +68,28 @@ export default function UserList() {
     page * itemsPerPage
   );
 
+  // CSV EXPORT FUNCTION
+  const handleExportCSV = () => {
+    const csvHeader = ["ID", "Name", "Email", "Role"];
+    const csvRows = [
+      csvHeader.join(","),
+      ...filteredUsers.map((user) =>
+        [user._id, user.name, user.email, user.role].join(",")
+      ),
+    ];
+    const csvData = csvRows.join("\n");
+
+    const blob = new Blob([csvData], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "user_list.csv";
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex">
       <Sidebar />
@@ -98,6 +120,10 @@ export default function UserList() {
               </Select>
             </FormControl>
           </div>
+
+          <Button variant="outlined" color="success" onClick={handleExportCSV}>
+            Export CSV
+          </Button>
         </div>
 
         {loading ? (

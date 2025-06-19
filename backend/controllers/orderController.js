@@ -71,19 +71,21 @@ const newOrder = catchAsyncError(async (req, res, next) => {
 // Update Live Location - api/v1/order/live-location/:id
 const updateLiveLocation = catchAsyncError(async (req, res, next) => {
   const { latitude, longitude } = req.body;
+  if (!latitude || !longitude) {
+    return res.status(400).json({ message: "Latitude and longitude required" });
+  }
 
   const order = await Order.findById(req.params.id);
   if (!order) {
-    return next(new ErrorHandler("Order not found", 404));
+    return res.status(404).json({ message: "Order not found" });
   }
 
-  order.liveLocation = { latitude, longitude };
+  order.shippingInfo.coordinates = { latitude, longitude };
   await order.save();
 
   res.status(200).json({
-    success: true,
-    message: "Live location updated",
-    location: order.liveLocation,
+    message: "Live location updated successfully",
+    coordinates: order.shippingInfo.coordinates,
   });
 });
 
