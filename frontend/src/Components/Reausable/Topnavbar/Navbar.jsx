@@ -137,7 +137,7 @@ function Navbar() {
                     className="w-full h-full object-cover"
                   />
                 </figure>
-                <span className="font-medium">{user.name}</span>
+                <span className="font-medium">{user?.name ?? "User"}</span>
                 <IoChevronDownOutline
                   className={`transition-transform duration-200 ${
                     dropdownOpen ? "rotate-180" : ""
