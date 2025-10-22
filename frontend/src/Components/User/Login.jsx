@@ -1,10 +1,8 @@
-import React, { Fragment, useState } from "react";
-import { useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BiUser } from "react-icons/bi";
-import { AiOutlineLock } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRightLong } from "react-icons/fa6";
-import "../../Styles/Home.css";
 import MetaData from "../Reausable/Topnavbar/MetaData";
 import { toast } from "react-toastify";
 import { clearAuthError, login } from "../../actions/userActions";
@@ -13,6 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [darkMode, setDarkMode] = useState(false); // dark/light toggle
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,85 +41,108 @@ function Login() {
           dispatch(clearAuthError);
         },
       });
-      return;
     }
   }, [isAuthenticated, error, dispatch, navigate, redirect]);
 
   return (
     <Fragment>
       <MetaData title={`Login`} />
-      <div className="text-white h-[100vh] flex justify-center items-center bg-cover ">
-        <div className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
-          <h1 className="text-4xl text-white font-bold text-center mb-6">
-            Login
-          </h1>
-          <h1 className="text-xl text-white font-semibold text-center mb-6">
-            👋 Welcome back!
-          </h1>
-          <div>
-            <form onSubmit={submitHandler}>
-              <div className="relative my-6">
-                <input
-                  type="email"
-                  id=""
-                  name=""
-                  className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-                  placeholder=""
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label
-                  htmlFor="email"
-                  className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
-                >
+      <div className={`${darkMode ? "dark" : ""}`}>
+        <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+          <div className="relative max-w-[500px] px-8 py-6 rounded-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-200 shadow-lg w-full mx-4">
+            {/* Left-to-Right Toggle Switch */}
+            <div
+              onClick={() => setDarkMode(!darkMode)}
+              className={`absolute top-3 right-4 w-14 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                darkMode ? "bg-gray-600" : "bg-gray-300"
+              }`}
+            >
+              <div
+                className={`w-5 h-5 bg-white rounded-full shadow-2xl transform transition-transform duration-300 ${
+                  darkMode ? "translate-x-7" : "translate-x-0"
+                }`}
+              ></div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+              Login
+            </h1>
+            <p className="text-sm text-center text-gray-500 dark:text-gray-300 mt-1">
+              👋 Welcome! Enter your details.
+            </p>
+
+            <form onSubmit={submitHandler} className="mt-6">
+              <div className="flex flex-col mb-4">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Email
                 </label>
-                <BiUser className="absolute top-0 right-4" />
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email"
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10  text-gray-800 dark:text-white text-sm"
+                  />
+                  <BiUser className="absolute right-3 top-3 text-gray-500 dark:text-gray-300" />
+                </div>
               </div>
 
-              <div className="relative my-6">
-                <input
-                  type="password"
-                  id=""
-                  name=""
-                  className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-                  placeholder=""
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <label
-                  htmlFor="pwd"
-                  className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
+              <div className="flex flex-col mb-4">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Password
                 </label>
-                <AiOutlineLock className="absolute top-0 right-4" />
+                <div className="relative">
+                  <input
+                    type={showPwd ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="password"
+                    className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+                  />
+                  {showPwd ? (
+                    <AiOutlineEyeInvisible
+                      className="absolute right-3 top-3 cursor-pointer text-gray-500 dark:text-gray-300"
+                      onClick={() => setShowPwd(false)}
+                    />
+                  ) : (
+                    <AiOutlineEye
+                      className="absolute right-3 top-3 cursor-pointer text-gray-500 dark:text-gray-300"
+                      onClick={() => setShowPwd(true)}
+                    />
+                  )}
+                </div>
               </div>
 
-              <div className="flex justify-between items-center">
-                <div className="flex gap-2 items-center">
-                  <input type="checkbox" id="" name="" />
-                  <label htmlFor="Remember Me">Remember Me</label>
-                </div>
-                <span className="text-blue-500">
-                  <Link to="/password/forgot">Forgot Password</Link>
-                </span>
+              <div className="flex justify-between items-center mb-5 text-sm">
+                <label className="text-gray-700 dark:text-gray-300">
+                  <input type="checkbox" className="mr-2" />
+                  Remember me
+                </label>
+                <Link
+                  to="/password/forgot"
+                  className="text-violet-500 hover:underline"
+                >
+                  Forgot?
+                </Link>
               </div>
+
               <button
                 type="submit"
-                className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
                 disabled={loading}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm rounded-md transition duration-200"
               >
-                Continue
-                <FaArrowRightLong />
+                Continue <FaArrowRightLong />
               </button>
-              <div className="text-center">
-                <span className="m-4">
-                  Don't have an account?
-                  <Link to="/register" className="text-blue-500">
-                    Click!
-                  </Link>
-                </span>
+
+              <div className="mt-5 text-center text-base text-gray-500 dark:text-gray-300">
+                No account?
+                <Link
+                  to="/register"
+                  className="ml-1 text-violet-500 hover:underline"
+                >
+                  Sign up
+                </Link>
               </div>
             </form>
           </div>

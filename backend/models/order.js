@@ -75,6 +75,10 @@ const orderSchema = mongoose.Schema({
       },
     },
   ],
+  trackingNumber: {
+    type: String,
+    default: null,
+  },
   itemsPrice: {
     type: Number,
     required: true,
@@ -98,11 +102,13 @@ const orderSchema = mongoose.Schema({
   paymentInfo: {
     id: {
       type: String,
-      required: true,
+      required: false, // ✅ Change to false
+      default: "pending",
     },
     status: {
       type: String,
       required: true,
+      default: "pending", // ✅ Add default
     },
   },
   paymentMethod: {

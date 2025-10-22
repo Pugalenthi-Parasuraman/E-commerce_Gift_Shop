@@ -41,16 +41,16 @@ function Cart() {
               Your Cart: <b className="font-futura">{items.length} items</b>
             </h2>
 
-            <div className="flex flex-wrap flex-col container items-center justify-center mt-6 ">
+            <div className="flex flex-wrap flex-col container items-center justify-center mt-6 dark:text-gray-900">
               {items.map((item) => (
-                <Fragment>
-                  <div className="flex p-3 flex-col w-full lg:w-1/3 bg-white shadow-md rounded-lg">
+                <Fragment key={item.product}>
+                  <div className="flex p-3 flex-col w-full lg:w-1/3 bg-white dark:bg-gray-300 shadow-md rounded-sm">
                     <div className="flex  items-center justify-between  mt-2 ">
                       <div className="w-52 ">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-40 object-cover rounded-md"
+                          className="w-40 object-cover rounded-sm dark:border dark:border-black"
                         />
                       </div>
 
@@ -104,7 +104,7 @@ function Cart() {
                 </Fragment>
               ))}
 
-              <div className=" my-4 font-poppins mx-5 flex flex-col items-center gap-1 w-1/2 lg:w-1/3 bg-white shadow-md p-6 rounded-lg">
+              <div className=" my-4 font-poppins mx-5 flex flex-col items-center gap-1 w-1/2 lg:w-1/3 bg-white dark:bg-gray-300 shadow-md p-6 rounded-sm">
                 <h4 className="text-lg font-semibold ">Order Summary</h4>
 
                 <div className="flex flex-col gap-2 w-full">

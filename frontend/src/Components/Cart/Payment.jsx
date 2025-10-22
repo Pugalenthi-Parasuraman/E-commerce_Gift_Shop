@@ -86,7 +86,7 @@ const Payment = () => {
 
               order.paymentInfo = {
                 id: response.razorpay_payment_id,
-                status: "successed",
+                status: "succeeded",
               };
 
               dispatch(orderCompleted());
@@ -114,16 +114,16 @@ const Payment = () => {
 
   return (
     <div className="flex font-rubik justify-center items-center min-h-screen">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center mb-4">
+      <div className="bg-white p-6 rounded-sm shadow-lg w-full max-w-md">
+        <h2 className="text-2xl dark:text-gray-900 font-semibold text-center mb-4">
           Complete Your Payment
         </h2>
 
         <div className="mb-4">
-          <label className="block mb-2 font-semibold">
+          <label className="block mb-2 font-semibold dark:text-gray-900">
             Choose Payment Method:
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 dark:text-gray-900">
             <label>
               <input
                 type="radio"
@@ -163,7 +163,7 @@ const Payment = () => {
 
         <button
           onClick={handlePayment}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition"
+          className="w-full bg-indigo-600 text-white py-3 rounded-sm hover:bg-indigo-700 transition"
         >
           {paymentMethod === "offline"
             ? "Place Order"

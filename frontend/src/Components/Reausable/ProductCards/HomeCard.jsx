@@ -18,20 +18,20 @@ function HomeCard(props) {
       return stars;
     };
   return (
-    <div className="productCard text-center w-52 overflow-hidden max-h-96 p-2 bg-white shadow-gray-950 border border-orange-500">
+    <div className="productCard text-center w-52 overflow-hidden max-h-96 p-2 bg-white dark:bg-gray-500 dark:border-white shadow-gray-950 border border-orange-500">
       <img className="w-full h-52 object-cover " src={props.image} alt="" />
       <div className="discription mt-2">
-        <p className="product_name font-futura text-gray-800 hover:text-orange-500">
+        <p className="product_name font-futura text-gray-800 hover:text-orange-500 dark:text-black dark:hover:text-white">
           {props.name}
         </p>
         <div className="ratings mt-2 flex justify-center items-center gap-1">
           {getStars()}
-          <span id="no_of_reviews" className="text-gray-700 text-sm ml-1">
+          <span id="no_of_reviews" className="text-gray-700 dark:text-gray-100 text-sm ml-1">
             ({props.reviews} Reviews)
           </span>
         </div>
         <Link to={"/products"}>
-          <button className="font-futura mt-2 border-gray-400 border py-2 px-14 bg-none cursor-pointer transition duration-300 ease-linear hover:border-black ">
+          <button className="font-futura mt-2 border-gray-400 dark:text-black  border py-2 px-14 bg-none cursor-pointer transition duration-300 ease-linear hover:border-black ">
             Shop Now
           </button>
         </Link>

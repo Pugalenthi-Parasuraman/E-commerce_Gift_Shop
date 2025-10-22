@@ -29,7 +29,11 @@ export default function UpdateOrder() {
     customOrderId = "",
   } = orderDetail;
 
-  const isPaid = paymentInfo.status === "succeeded";
+ 
+  const isPaid =
+    (paymentInfo?.method === "online" && paymentInfo?.status === "succeeded") ||
+    (paymentInfo?.method === "offline" && paymentInfo?.status === "succeeded");
+
   const [orderStatus, setOrderStatus] = useState("Processing");
 
   useEffect(() => {

@@ -42,7 +42,7 @@ function ConfirmOrder() {
       <CheckoutSteps shipping confirmOrder />
 
       <div className="flex flex-col font-rubik lg:flex-row justify-between gap-6 p-6 max-w-6xl mx-auto">
-        <div className="w-full lg:w-2/3 bg-white shadow-md p-6 rounded-lg">
+        <div className="w-full lg:w-2/3 bg-white shadow-md p-6 rounded-sm dark:text-gray-900">
           <h4 className="text-lg font-semibold mb-3">Shipping Info</h4>
           <p>
             <b>Name:</b> {user.name}
@@ -88,7 +88,7 @@ function ConfirmOrder() {
           ))}
         </div>
 
-        <div className="w-full lg:w-1/3 bg-white shadow-md p-6 rounded-lg">
+        <div className="w-full lg:w-1/3 dark:text-gray-900 bg-white shadow-md p-6 rounded-sm">
           <h4 className="text-lg font-semibold">Order Summary</h4>
           <hr className="my-2" />
           <p className="flex justify-between">
@@ -109,7 +109,7 @@ function ConfirmOrder() {
           <hr className="my-2" />
           <button
             onClick={processPayment}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg font-semibold"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-sm font-semibold"
           >
             Proceed to Payment
           </button>

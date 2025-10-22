@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../Reausable/Topnavbar/Loader";
 import { orderDetail as orderDetailAction } from "../../actions/orderActions";
-import LiveLocationPage from "./UserLocation";
 
 function OrderDetail() {
   const { orderDetail, loading } = useSelector((state) => state.orderState);
@@ -42,14 +41,14 @@ function OrderDetail() {
         <Loader />
       ) : (
         <div className="max-w-6xl mx-auto p-4">
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h1 className="text-2xl font-bold mb-5">
+          <div className="bg-white shadow-md rounded-sm p-6">
+            <h1 className="text-2xl font-bold mb-5 dark:text-gray-900">
               Order #
               {customOrderId ||
                 `ORD-${orderDetail._id?.slice(-4).toUpperCase()}`}
             </h1>
 
-            <h4 className="text-lg font-semibold mt-6 mb-3">
+            <h4 className="text-lg font-semibold mt-6 mb-3 dark:text-gray-900">
               Live Order Tracking
             </h4>
             <div className="flex items-center space-x-4 mb-6">
@@ -66,7 +65,9 @@ function OrderDetail() {
                     >
                       {index + 1}
                     </div>
-                    <p className="text-xs mt-1 text-center">{step}</p>
+                    <p className="text-xs mt-1 text-center dark:text-gray-900">
+                      {step}
+                    </p>
                   </div>
                 );
               })}
@@ -74,7 +75,7 @@ function OrderDetail() {
 
             {statusHistory?.length > 0 && (
               <>
-                <h4 className="text-lg font-semibold mt-6 mb-2">
+                <h4 className="text-lg font-semibold dark:text-gray-900 mt-6 mb-2">
                   Tracking Timeline
                 </h4>
                 <ul className="space-y-1 mb-6">
@@ -89,7 +90,7 @@ function OrderDetail() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+              <div className="dark:text-gray-900">
                 <h4 className="text-lg font-semibold mb-3">Shipping Info</h4>
                 <div className="space-y-2">
                   <p>
@@ -110,7 +111,9 @@ function OrderDetail() {
               </div>
 
               <div>
-                <h4 className="text-lg font-semibold mb-3">Payment</h4>
+                <h4 className="text-lg font-semibold mb-3 dark:text-gray-900">
+                  Payment
+                </h4>
                 <div className="space-y-2">
                   <p
                     className={
@@ -121,7 +124,7 @@ function OrderDetail() {
                   >
                     {isPaid ? "PAID" : "NOT PAID"}
                   </p>
-                  <p>
+                  <p className="dark:text-gray-900">
                     <b>Method:</b>{" "}
                     {paymentInfo.method === "cash"
                       ? "Cash on Delivery"
@@ -135,7 +138,7 @@ function OrderDetail() {
                   )}
                 </div>
 
-                <h4 className="text-lg font-semibold mt-4 mb-3">
+                <h4 className="text-lg dark:text-gray-900 font-semibold mt-4 mb-3">
                   Order Status
                 </h4>
                 <p
@@ -160,7 +163,9 @@ function OrderDetail() {
 
             <hr className="my-6 border-gray-300" />
 
-            <h4 className="text-lg font-semibold mb-4">Order Items</h4>
+            <h4 className="text-lg font-semibold mb-4 dark:text-gray-900">
+              Order Items
+            </h4>
             {orderItems &&
               orderItems.map((item) => (
                 <div
@@ -185,7 +190,7 @@ function OrderDetail() {
 
             <hr className="my-6 border-gray-300" />
 
-            <div className="flex justify-end">
+            <div className="flex justify-end dark:text-gray-900">
               <div className="text-right space-y-2">
                 <p>
                   <b>Subtotal:</b> ₹{totalPrice}
@@ -206,7 +211,6 @@ function OrderDetail() {
           </div>
         </div>
       )}
-
     </Fragment>
   );
 }

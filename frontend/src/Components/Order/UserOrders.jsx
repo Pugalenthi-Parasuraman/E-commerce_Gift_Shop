@@ -117,7 +117,7 @@ export default function UserOrders() {
     <Fragment>
       <MetaData title="My Orders" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">My Orders</h1>
+        <h1 className="text-2xl font-bold dark:text-gray-100 text-gray-900 mb-8">My Orders</h1>
 
         {userOrders.length === 0 ? (
           <div className="text-center py-12">

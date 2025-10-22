@@ -84,6 +84,8 @@ export default function OrderList() {
     const rows = adminOrders.map((order) => {
       const liveLocation = order.liveLocation
         ? `${order.liveLocation.latitude}, ${order.liveLocation.longitude}`
+        : order.shippingInfo?.coordinates
+        ? `${order.shippingInfo.coordinates.latitude}, ${order.shippingInfo.coordinates.longitude}`
         : "N/A";
       return `${order._id},${order.customOrderId || "N/A"},${
         order.orderItems.length
@@ -199,6 +201,22 @@ export default function OrderList() {
                             {new Date(
                               order.liveLocation.timestamp
                             ).toLocaleString()}
+                          </span>
+                        </div>
+                      ) : order.shippingInfo?.coordinates?.latitude &&
+                        order.shippingInfo?.coordinates?.longitude ? (
+                        <div className="flex flex-col">
+                          <a
+                            href={`https://maps.google.com/?q=${order.shippingInfo.coordinates.latitude},${order.shippingInfo.coordinates.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline"
+                          >
+                            {order.shippingInfo.coordinates.latitude},{" "}
+                            {order.shippingInfo.coordinates.longitude}
+                          </a>
+                          <span className="text-xs text-orange-500">
+                            From Shipping Info
                           </span>
                         </div>
                       ) : (

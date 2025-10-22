@@ -50,7 +50,7 @@ function DesktopView({ menu }) {
       onHoverEnd={toggleHoverMenu}
       key={menu.name}
     >
-      <span className="flex-center relative gap-1 cursor-pointer px-1 py-1 hover:text-black font-poppins uppercase text-sm tracking-wider font-medium">
+      <span className="flex-center relative gap-1 cursor-pointer px-1 py-1 dark:hover:text-white hover:text-black font-poppins uppercase text-sm tracking-wider font-medium">
         {menu.name}
         {hasSubMenu && (
           <ChevronDown

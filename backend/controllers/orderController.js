@@ -3,7 +3,8 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 const ErrorHandler = require("../utils/errorHandler");
 const Counter = require("../models/counter");
-const { sendEmail } = require("../utils/email");
+const sendEmail = require("../utils/email");
+const User = require("../models/user");
 
 // Create New Order - api/v1/order/new
 const newOrder = catchAsyncError(async (req, res, next) => {
@@ -17,16 +18,20 @@ const newOrder = catchAsyncError(async (req, res, next) => {
     paymentInfo,
     paymentMethod,
     liveLocation,
+    trackingNumber,
   } = req.body;
 
-
-  if (
-    paymentMethod === "online" &&
-    (!paymentInfo || paymentInfo.status !== "successed")
-  ) {
-    return next(new ErrorHandler("Online payment not completed.", 400));
+  // More readable version
+  if (paymentMethod === "online") {
+    if (
+      paymentInfo &&
+      paymentInfo.status &&
+      paymentInfo.status !== "succeeded"
+    ) {
+      return next(new ErrorHandler("Online payment not completed.", 400));
+    }
+    // If no paymentInfo, allow order creation with pending status
   }
-
 
   const counter = await Counter.findOneAndUpdate(
     { userId: req.user.id },
@@ -35,7 +40,12 @@ const newOrder = catchAsyncError(async (req, res, next) => {
   );
 
   const customOrderId = `RUDRA-${String(counter.seq).padStart(2, "0")}`;
-
+  // ✅ Generate tracking number if not provided
+  const generatedTrackingNumber =
+    trackingNumber ||
+    `TRK-${Date.now().toString().slice(-6)}-${Math.floor(
+      Math.random() * 900 + 100
+    )}`;
 
   const order = await Order.create({
     orderItems,
@@ -50,9 +60,10 @@ const newOrder = catchAsyncError(async (req, res, next) => {
     paidAt: paymentMethod === "online" ? Date.now() : null,
     customOrderId,
     liveLocation,
+    trackingNumber: generatedTrackingNumber,
   });
 
-  const user = await User.findById(req.user.id); 
+  const user = await User.findById(req.user.id);
   sendEmail({
     email: user.email,
     subject: "Order Placed Successfully",
@@ -147,7 +158,7 @@ function formatOrderResponse(order) {
 
 // Admin: Update Order / Order Status - api/v1/admin/order/:id
 const updateOrder = catchAsyncError(async (req, res, next) => {
-  const order = await Order.findById(req.params.id);
+  const order = await Order.findById(req.params.id).populate("user");
 
   if (!order) {
     return next(new ErrorHandler("Order not found", 404));
@@ -157,20 +168,88 @@ const updateOrder = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler("Order has already been delivered!", 400));
   }
 
-  // Update stock if order is being processed
   if (req.body.orderStatus === "Processing") {
     for (const orderItem of order.orderItems) {
       await updateStock(orderItem.product, orderItem.quantity);
     }
   }
 
+  // ✅ Offline Payment Manual Update Integration
+  if (req.body.paymentInfo?.status === "succeeded") {
+    order.paymentInfo = {
+      ...order.paymentInfo,
+      status: "succeeded",
+      method: "offline",
+      paidAt: Date.now(),
+    };
+  }
+
   order.orderStatus = req.body.orderStatus;
+
+  if (req.body.trackingNumber) {
+    order.trackingNumber = req.body.trackingNumber;
+  }
 
   if (req.body.orderStatus === "Delivered") {
     order.deliveredAt = Date.now();
   }
 
   await order.save();
+
+  // ✅ Send Email Notification
+  const customer = order.user;
+  const orderId = order.customOrderId || order._id.toString();
+  const coords = order.shippingInfo?.coordinates;
+  const mapLink =
+    coords?.latitude && coords?.longitude
+      ? `https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`
+      : null;
+
+      let BASE_URL = process.env.FRONTEND_URL;
+      if (process.env.NODE_ENV === "production") {
+        BASE_URL = `${req.protocol}://${req.get("host")}`;
+      }
+
+  const frontendTrackingLink = `${BASE_URL}/order/location/${order._id}`;
+
+  const plainMessage = `Hi ${customer.name},
+
+Your order ${orderId} is now marked as "${order.orderStatus}".
+
+${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ""}
+
+Track your order: ${frontendTrackingLink}
+${mapLink ? `\nView on Map: ${mapLink}` : ""}
+`;
+
+  const htmlMessage = `
+    <div style="font-family:sans-serif;padding:20px;line-height:1.6">
+      <h2 style="color:#4CAF50;">Hi ${customer.name},</h2>
+      <p>Your order <strong>${orderId}</strong> is now <strong>${order.orderStatus}</strong>.</p>
+
+      ${
+        order.trackingNumber
+          ? `<p><strong>Tracking Number:</strong> ${order.trackingNumber}</p>`
+          : ""
+      }
+
+      <p><a href="${frontendTrackingLink}" style="color:#2196f3;">📦 Track Order Status</a></p>
+      ${
+        mapLink
+          ? `<p><a href="${mapLink}" style="color:#f44336;">🗺️ View Location on Map</a></p>`
+          : ""
+      }
+
+      <p>Thank you for shopping with us!<br/>– RUDRA Team</p>
+    </div>
+  `;
+
+  await sendEmail({
+    email: customer.email,
+    subject: `Order ${orderId} – ${order.orderStatus}`,
+    message: plainMessage,
+    html: htmlMessage,
+  });
 
   res.status(200).json({
     success: true,

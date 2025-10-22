@@ -54,18 +54,19 @@ function App() {
     getRazorpayApiKey();
   }, []);
 
-const isAllPage = [
-  "/login",
-  "/register",
-  "/password/forgot",
-  "/password/reset/:token",
-  "/myprofile/update/password",
-  "/myprofile/update",
-  "/shipping",
-  "/order/confirm",
-  "/order/success",
-  "/payment",
-].includes(location.pathname);
+const isAllPage =
+  [
+    "/login",
+    "/register",
+    "/password/forgot",
+    "/myprofile/update/password",
+    "/myprofile/update",
+    "/shipping",
+    "/order/confirm",
+    "/order/success",
+    "/payment",
+  ].includes(location.pathname) ||
+  location.pathname.startsWith("/password/reset/");
 const isAdminPage = location.pathname.startsWith("/admin");
 
   return (

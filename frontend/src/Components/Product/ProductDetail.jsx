@@ -112,7 +112,7 @@ const discountColorText =
                 <h3 className="text-2xl font-poppins font-semibold uppercase">
                   {product.name}
                 </h3>
-                <p className="text-gray-600 mt-2  text-sm">
+                <p className="text-gray-600 mt-2 dark:text-gray-300  text-sm">
                   Product # {product._id}
                 </p>
 
@@ -120,7 +120,7 @@ const discountColorText =
                   {getStars()}
                   <span
                     id="no_of_reviews"
-                    className="text-gray-700 text-sm ml-1"
+                    className="text-gray-700 dark:text-gray-300 text-sm ml-1"
                   >
                     ({product.numberOfReviews} Reviews)
                   </span>
@@ -128,7 +128,7 @@ const discountColorText =
 
                 <p className="product_price font-futura text-lg font-bold text-orange-500">
                   ₹{product.price}
-                  <span className="line-through text-gray-500 ml-2 font-medium text-base">
+                  <span className="line-through dark:text-gray-300 text-gray-500 ml-2 font-medium text-base">
                     ₹{product.duplicatePrice}
                   </span>
                   <span
@@ -137,7 +137,7 @@ const discountColorText =
                     {product.discount}%
                   </span>
                 </p>
-                <div className="flex items-center mt-3  bg-white rounded">
+                <div className="flex items-center mt-3  bg-white rounded-sm">
                   <button className="">
                     <FaMinus
                       className=" text-orange-500 mx-2"
@@ -148,7 +148,7 @@ const discountColorText =
                     type="number"
                     value={quantity}
                     readOnly
-                    className="w-7 mx-2 inline  text-center "
+                    className="w-7 mx-2 inline dark:text-gray-900 text-center "
                   />
                   <button className="">
                     <FaPlus
@@ -186,7 +186,9 @@ const discountColorText =
                 </p>
 
                 <h4 className="text-lg font-semibold mt-2">Description:</h4>
-                <p className="text-gray-600 ">{product.description}</p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {product.description}
+                </p>
                 <hr className="my-2" />
                 <p>
                   Sold by: <strong>{product.seller}</strong>
@@ -203,8 +205,8 @@ const discountColorText =
 
                 {showReviewModal && (
                   <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg w-96">
-                      <h3 className="text-xl font-semibold mb-4">
+                    <div className="bg-white p-8 rounded-sm w-96">
+                      <h3 className="text-xl font-semibold mb-4 dark:text-gray-900">
                         Submit Your Review
                       </h3>
 
@@ -225,13 +227,13 @@ const discountColorText =
                         placeholder="Write your review here..."
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
-                        className="w-full border border-gray-300 rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        className="w-full border dark:text-gray-900 border-gray-300 rounded p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300"
                       ></textarea>
 
                       <div className="flex justify-end gap-4">
                         <button
                           onClick={() => setShowReviewModal(false)}
-                          className="px-4 py-2 bg-gray-300 rounded"
+                          className="px-4 py-2 bg-gray-300 rounded dark:text-gray-900"
                         >
                           Cancel
                         </button>

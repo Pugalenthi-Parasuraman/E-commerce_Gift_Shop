@@ -54,8 +54,10 @@ export default function ProductReview({ reviews, productId }) {
                 {getStars(review.rating)}
               </div>
             </div>
-            <p className="text-gray-800 font-semibold">by {review.user.name}</p>
-            <p className="text-gray-600">{review.comment}</p>
+            <p className="text-gray-800 font-semibold dark:text-gray-300">
+              by {review.user.name}
+            </p>
+            <p className="text-gray-600 dark:text-gray-300">{review.comment}</p>
 
             {/* Display Replies */}
             {review.replies && review.replies.length > 0 && (
@@ -66,10 +68,12 @@ export default function ProductReview({ reviews, productId }) {
                     key={reply._id}
                     className="reply-card my-2 p-2 rounded-lg"
                   >
-                    <p className="text-gray-800 font-semibold">
+                    <p className="text-gray-800 font-semibold dark:text-gray-300">
                       by {reply.name}
                     </p>
-                    <p className="text-gray-600">{reply.comment}</p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {reply.comment}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -84,7 +88,7 @@ export default function ProductReview({ reviews, productId }) {
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Write a reply..."
-                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      className="w-full p-2 border border-gray-300 rounded-lg dark:text-gray-900"
                       rows="3"
                     />
                     <div className="flex gap-2 mt-2">

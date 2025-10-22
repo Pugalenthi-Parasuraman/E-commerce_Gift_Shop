@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { MdDriveFolderUpload } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { updateProfile, clearAuthError } from "../../actions/userActions";
@@ -15,6 +14,7 @@ function ProfileUpdate() {
   const [avatarPreview, setAvatarPreview] = useState(
     "/images/default_avatar.png"
   );
+  const [darkMode, setDarkMode] = useState(false);
   const dispatch = useDispatch();
 
   const onChangeAvatar = (e) => {
@@ -25,7 +25,6 @@ function ProfileUpdate() {
         setAvatar(e.target.files[0]);
       }
     };
-
     reader.readAsDataURL(e.target.files[0]);
   };
 
@@ -52,7 +51,6 @@ function ProfileUpdate() {
         type: "success",
         position: "bottom-center",
       });
-      return;
     }
 
     if (error) {
@@ -63,91 +61,105 @@ function ProfileUpdate() {
           dispatch(clearAuthError);
         },
       });
-      return;
     }
   }, [user, isUpdated, error, dispatch]);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   return (
-    <div className="text-white h-[100vh] flex justify-center items-center bg-cover">
+    <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300 relative px-4">
       <form
         onSubmit={submitHandler}
         encType="multipart/form-data"
-        className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative"
+        className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-sm p-6 shadow-lg w-full max-w-md relative"
       >
-        <h1 className="text-4xl text-white font-bold text-center mb-6">
+        {/* Inner Box Dark/Light Toggle */}
+        <div className="absolute top-6 right-6 shadow-inner">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+              className="sr-only peer"
+            />
+            <div className="w-14 h-7 bg-gray-300 rounded-full peer-checked:bg-yellow-400 transition-colors duration-300"></div>
+            <div className="absolute top-[4px] left-[4px] w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-7"></div>
+          </label>
+        </div>
+
+        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">
           Update Profile
         </h1>
-        <div>
-          <div className="relative my-6">
+
+        {/* Name Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Name
+          </label>
+          <div className="relative">
             <input
-              type="name"
-              id="name"
-              name="name"
+              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 pl-10 bg-transparent text-gray-900 dark:text-white text-sm"
+              placeholder="Enter your name"
             />
-            <label
-              htmlFor="name"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
-            >
-              Name
-            </label>
-            <BiUser className="absolute top-0 right-4" />
+            <BiUser className="absolute left-3 top-4 text-gray-500 dark:text-gray-300" />
           </div>
-          <div className="relative my-6">
+        </div>
+
+        {/* Email Field */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Email
+          </label>
+          <div className="relative items-center justify-start">
             <input
               type="email"
-              id="email"
-              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 pl-10 bg-transparent text-gray-900 dark:text-white text-sm"
+              placeholder="Enter your email"
             />
-            <label
-              htmlFor="email"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
-            >
-              Email
-            </label>
-            <BiUser className="absolute top-0 right-4" />
+            <BiUser className="absolute left-3 top-4 text-gray-500 dark:text-gray-300" />
           </div>
-          <div className="relative my-6">
-            <span className="flex gap-3 items-center">
-              <figure className="inline-block w-15 py-2.3 px-0 text-sm text-white bg-transparent appearance-none focus:outline-none focus-text-white peer">
-                <img
-                  src={avatarPreview}
-                  alt="Avatar Preview"
-                  className="w-12 h-12 object-cover-f rounded-full"
-                />
-              </figure>
+        </div>
+
+        {/* Avatar Upload */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Avatar
+          </label>
+          <div className="flex items-center gap-4">
+            <img
+              src={avatarPreview}
+              alt="Avatar Preview"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div className="relative flex-1">
               <input
                 type="file"
-                id="myfile"
-                name="avatar"
                 onChange={onChangeAvatar}
-                className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent appearance-none focus:outline-none focus-text-white peer"
-                placeholder=""
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-2 text-gray-900 dark:text-white bg-transparent text-sm"
               />
-              <label
-                htmlFor="myfile"
-                className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Avatar
-              </label>
-              <MdDriveFolderUpload className="absolute top-0 right-4" />
-            </span>
+              <MdDriveFolderUpload className="absolute right-3 top-2.5 text-gray-500 dark:text-gray-300" />
+            </div>
           </div>
-          <button
-            type="submit"
-            className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
-          >
-            Update
-            <FaArrowRightLong />
-          </button>
         </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full flex items-center justify-center gap-2 py-3 bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm rounded-lg transition duration-200"
+        >
+          Update <FaArrowRightLong />
+        </button>
       </form>
     </div>
   );

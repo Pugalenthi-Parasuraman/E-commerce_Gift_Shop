@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiUser } from "react-icons/bi";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { forgotPassword, clearAuthError } from "../../actions/userActions";
 
 function PasswordForgot() {
   const [email, setEmail] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
   const dispatch = useDispatch();
   const { error, message } = useSelector((state) => state.authState);
 
@@ -36,44 +36,65 @@ function PasswordForgot() {
           dispatch(clearAuthError);
         },
       });
-      return;
     }
   }, [message, error, dispatch]);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   return (
-    <div className="text-white h-[100vh] flex justify-center items-center bg-cover ">
-      <div className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
-        <h1 className="text-4xl text-white font-bold text-center mb-6">
+    <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300 relative">
+      <div className="relative max-w-[500px] w-full px-8 py-8 rounded-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md">
+        {/* Mobile-friendly Toggle Switch */}
+        <div className="absolute top-5 right-5">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+              className="sr-only peer"
+            />
+            <div className="w-14 h-8 bg-gray-300 rounded-full peer-checked:bg-gray-600 transition-colors duration-300"></div>
+            <div className="absolute top-[4px] left-[4px] w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-6"></div>
+          </label>
+        </div>
+
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">
           Forgot Password
         </h1>
-        <div>
-          <form onSubmit={submitHandler}>
-            <div className="relative my-6">
+        <p className="text-sm text-center text-gray-500 dark:text-gray-300 mb-6">
+          Enter your email and we’ll send you a reset link.
+        </p>
+
+        <form onSubmit={submitHandler}>
+          <div className="flex flex-col mb-6">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Email
+            </label>
+            <div className="relative">
               <input
                 type="email"
-                id=""
-                name=""
-                className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-                placeholder=""
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
               />
-              <label
-                htmlFor="email"
-                className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
-              >
-                Email
-              </label>
-              <BiUser className="absolute top-0 right-4" />
+              <BiUser className="absolute right-3 top-3 text-gray-500 dark:text-gray-300" />
             </div>
-            <button
-              type="submit"
-              className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
-            >
-              Send Email
-              <FaArrowRightLong />
-            </button>
-          </form>
-        </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-2 py-3 bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm rounded-xl transition duration-200"
+          >
+            Send Email <FaArrowRightLong />
+          </button>
+        </form>
       </div>
     </div>
   );

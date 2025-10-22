@@ -31,19 +31,19 @@ const discountColor =
     : "bg-red-100 text-red-600";
 
   return (
-    <div className="productCard text-center w-60 overflow-hidden max-h-full p-2 bg-white shadow-gray-950 border border-orange-500">
+    <div className="productCard text-center w-60 overflow-hidden max-h-full p-2 bg-white dark:bg-gray-400 shadow-gray-950 border dark:border-black border-orange-500">
       <div className="">
         {product.images.length > 0 && (
           <img
-            className="w-full h-52 object-cover"
+            className="w-full h-52 object-cover dark:border-black dark:border"
             src={product.images[0].image}
             alt={product.name}
           />
         )}
         <div className="flex flex-col">
-          <p className="product_price font-futura text-lg font-bold">
+          <p className="product_price font-futura text-lg font-bold dark:text-black">
             ₹{product.price}
-            <span className="line-through text-gray-500 ml-2 font-medium text-base">
+            <span className="line-through dark:text-gray-700 text-gray-500 ml-2 font-medium text-base">
               ₹{product.duplicatePrice}
             </span>
             {discountPercent > 0 && (
@@ -54,7 +54,7 @@ const discountColor =
               </span>
             )}
           </p>
-          <h5 className="font-futura text-gray-800 hover:text-orange-500 truncate">
+          <h5 className="font-futura text-gray-800 hover:text-orange-500 dark:hover:text-white truncate">
             <Link to={`/product/${product._id}`}>{product.name}</Link>
           </h5>
           <div className="ratings mt-2 flex justify-center items-center gap-1">
@@ -66,7 +66,7 @@ const discountColor =
           <Link
             to={`/product/${product._id}`}
             id="view_btn"
-            className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 text-white cursor-pointer transition duration-300 ease-linear hover:border-black hover:bg-orange-600"
+            className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 dark:bg-gray-500 dark:hover:bg-gray-700 text-white cursor-pointer transition duration-300 ease-linear hover:border-black dark:border-black dark:hover:border-white  hover:bg-orange-600"
           >
             View Details
           </Link>

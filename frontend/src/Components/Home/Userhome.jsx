@@ -68,7 +68,7 @@ function Userhome() {
           <span className="font-rubik font-semibold text-2xl">
             Top Selling Products
           </span>
-          <span className="font-rubik text-gray-700 text-wrap">
+          <span className="font-rubik text-gray-700 text-wrap dark:text-white">
             Discover our specially curated selection of unique gifts, perfect
             for any occasion
           </span>
@@ -76,7 +76,7 @@ function Userhome() {
         <span className="flex flex-col items-center pb-8">
           <PopularList />
           <Link to={"/products"}>
-            <button className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 text-white cursor-pointer transition duration-300 ease-linear hover:border-black hover:bg-orange-600">
+            <button className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 dark:bg-gray-700 dark:hover:bg-gray-500 text-white cursor-pointer transition duration-300 ease-linear hover:border-black hover:bg-orange-600">
               View all Proucts
             </button>
           </Link>
@@ -91,7 +91,7 @@ function Userhome() {
           <span className="font-rubik font-semibold text-2xl">
             Personalized
           </span>
-          <span className="font-rubik text-gray-700 text-wrap">
+          <span className="font-rubik text-gray-700 text-wrap dark:text-white">
             A personalized gift adds a unique and meaningful touch, turning any
             occasion into a memorable celebration.
           </span>
@@ -99,7 +99,7 @@ function Userhome() {
         <span className="flex flex-col items-center pb-10">
           <PersonaliseList />
           <Link to={"/products"}>
-            <button className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 text-white cursor-pointer transition duration-300 ease-linear hover:border-black hover:bg-orange-600">
+            <button className="font-futura mt-2 border-opacity-50 border py-2 px-16 bg-orange-500 dark:bg-gray-700 dark:hover:bg-gray-500 text-white cursor-pointer transition duration-300 ease-linear hover:border-black hover:bg-orange-600">
               View all Proucts
             </button>
           </Link>

@@ -7,7 +7,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const addNewProducts = catchAsyncError(async (req, res, next) => {
   let images = [];
   let BASE_URL = process.env.BACKEND_URL;
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "production") {
     BASE_URL = `${req.protocol}://${req.get("host")}`;
   }
 
@@ -83,7 +83,7 @@ const UpdateProducts = async (req, res, next) => {
   }
 
   let BASE_URL = process.env.BACKEND_URL;
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "production") {
     BASE_URL = `${req.protocol}://${req.get("host")}`;
   }
 

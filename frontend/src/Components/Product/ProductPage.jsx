@@ -64,9 +64,9 @@ function ProductPage() {
                   prevPageText={"Prev"}
                   firstPageText={"First"}
                   lastPageText={"Last"}
-                  itemClass="page-item block w-full text-center font-futura font-medium px-3 py-2 border border-gray-300 hover:bg-gray-100"
-                  linkClass="page-link text-black hover:text-orange-600"
-                  activeClass="active bg-orange-500 border-orange-500 text-white"
+                  itemClass="page-item block w-full text-center font-futura font-medium px-3 py-2 border border-gray-300 dark:hover:bg-gray-700 hover:bg-gray-100"
+                  linkClass="page-link text-black dark:text-white hover:text-orange-600"
+                  activeClass="active bg-orange-500 dark:bg-blue-500/70 border-orange-500 dark:border-gray-300 text-white"
                   activeLinkClass="text-black"
                   innerClass="pagination"
                 />

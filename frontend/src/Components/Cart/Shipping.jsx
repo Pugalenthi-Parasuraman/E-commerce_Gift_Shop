@@ -1,5 +1,14 @@
 import React, { useEffect, useState, Fragment } from "react";
-import { FaArrowRightLong } from "react-icons/fa6";
+import {
+  FaArrowRight,
+  FaMapMarkedAlt,
+  FaCity,
+  FaPhone,
+  FaMapPin,
+  FaGlobeAsia,
+  FaHome,
+  FaGlobe,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { countries } from "countries-list";
 import { saveShippingInfo } from "../../Slices/cartSlice";
@@ -7,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import CheckoutStep from "./CheckoutStep";
 import { toast } from "react-toastify";
 
-export const validateShipping = (shippingInfo, navigate) => {
+export const validateShipping = (shippingInfo) => {
   if (
     !shippingInfo.address ||
     !shippingInfo.city ||
@@ -66,7 +75,7 @@ function Shipping() {
         );
       }
     }
-  }, []);
+  }, [latitude, longitude]);
 
   const fetchLocationDetails = async (lat, lon) => {
     try {
@@ -92,6 +101,15 @@ function Shipping() {
     }
   };
 
+  const formatPhone = (value) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 10);
+    return numbers.length > 5
+      ? `${numbers.slice(0, 5)} ${numbers.slice(5)}`
+      : numbers;
+  };
+
+  const formatPostal = (value) => value.replace(/\D/g, "").slice(0, 6);
+
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(
@@ -102,159 +120,234 @@ function Shipping() {
         postalCode,
         country,
         state,
-        coordinates: {
-          latitude,
-          longitude,
-        },
+        coordinates: { latitude, longitude },
       })
     );
     navigate("/order/confirm");
   };
 
+  const inputWrapper =
+    "flex items-center border border-gray-300 rounded-[5px] px-3 py-2 w-full focus-within:ring-2 focus-within:ring-blue-500";
+
   return (
     <Fragment>
       <CheckoutStep shipping />
-      <div className="text-black h-[100vh] flex justify-center items-center bg-cover">
-        <div className="bg-gray-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
-          <h1 className="text-4xl text-black font-futura font-bold text-center mb-6">
+      <div className="flex justify-center items-start py-2 px-4">
+        <div className="bg-white border border-gray-300 rounded-[2px] py-3 px-8 shadow-xl w-full max-w-md">
+          <h1 className="text-2xl text-orange-400 dark:text-black font-bold text-center mb-5 font-sans">
             Shipping Info
           </h1>
-          <form className="font-semibold" onSubmit={submitHandler}>
-            {[
-              {
-                label: "Address",
-                value: address,
-                setter: setAddress,
-                type: "text",
-                id: "address_field",
-              },
-              {
-                label: "City",
-                value: city,
-                setter: setCity,
-                type: "text",
-                id: "city_field",
-              },
-              {
-                label: "Phone No",
-                value: phoneNo,
-                setter: setPhoneNo,
-                type: "tel",
-                id: "phone_field",
-              },
-              {
-                label: "Postal Code",
-                value: postalCode,
-                setter: setPostalCode,
-                type: "number",
-                id: "postal_code_field",
-              },
-              {
-                label: "Latitude",
-                value: latitude,
-                setter: setLatitude,
-                type: "number",
-                id: "latitude_field",
-              },
-              {
-                label: "Longitude",
-                value: longitude,
-                setter: setLongitude,
-                type: "number",
-                id: "longitude_field",
-              },
-              {
-                label: "State",
-                value: state,
-                setter: setState,
-                type: "text",
-                id: "state_field",
-              },
-            ].map(({ label, value, setter, type, id }) => (
-              <div className="relative my-6" key={id}>
-                <input
-                  type={type}
-                  id={id}
-                  step={type === "number" ? "any" : undefined}
-                  value={value}
-                  onChange={(e) => setter(e.target.value)}
-                  required
-                  className="block w-72 py-2.3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                />
-                <label
-                  htmlFor={id}
-                  className="absolute text-sm font-inter text-black duration-300 transform -translate-y-6 scale-75 top-0 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                >
-                  {label}
-                </label>
-              </div>
-            ))}
 
-            {/* Country Dropdown */}
-            <div className="relative my-6">
+          <form className="font-medium" onSubmit={submitHandler}>
+            <div className="mb-4">
+              <label
+                htmlFor="address_field"
+                className="block text-sm text-gray-700 mb-1"
+              >
+                Address
+              </label>
+              <div className={inputWrapper}>
+                <FaHome className="text-gray-500 mr-2" />
+                <input
+                  type="text"
+                  id="address_field"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                  className="w-full bg-transparent outline-none dark:text-black"
+                />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="city_field"
+                className="block text-sm text-gray-700 mb-1"
+              >
+                City
+              </label>
+              <div className={inputWrapper}>
+                <FaCity className="text-gray-500 mr-2" />
+                <input
+                  type="text"
+                  id="city_field"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                  className="w-full dark:text-black bg-transparent outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="mb-4 flex gap-4">
+              <div className="w-1/2">
+                <label
+                  htmlFor="phone_field"
+                  className="block text-sm text-gray-700 mb-1"
+                >
+                  Phone No
+                </label>
+                <div className={inputWrapper}>
+                  <FaPhone className="text-gray-500 mr-2" />
+                  <input
+                    type="tel"
+                    id="phone_field"
+                    value={phoneNo}
+                    onChange={(e) => setPhoneNo(formatPhone(e.target.value))}
+                    required
+                    className="w-full dark:text-black bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+              <div className="w-1/2">
+                <label
+                  htmlFor="postal_code_field"
+                  className="block text-sm text-gray-700 mb-1"
+                >
+                  Postal Code
+                </label>
+                <div className={inputWrapper}>
+                  <FaMapPin className="text-gray-500 mr-2" />
+                  <input
+                    type="text"
+                    id="postal_code_field"
+                    value={postalCode}
+                    onChange={(e) =>
+                      setPostalCode(formatPostal(e.target.value))
+                    }
+                    required
+                    className="w-full dark:text-black bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="state_field"
+                className="block text-sm text-gray-700 mb-1"
+              >
+                State
+              </label>
+              <div className={inputWrapper}>
+                <FaMapMarkedAlt className="text-gray-500 mr-2" />
+                <input
+                  type="text"
+                  id="state_field"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  required
+                  className="w-full dark:text-black bg-transparent outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="mb-4 flex gap-4">
+              <div className="w-1/2">
+                <label
+                  htmlFor="latitude_field"
+                  className="block text-sm text-gray-700 mb-1"
+                >
+                  Latitude
+                </label>
+                <div className={inputWrapper}>
+                  <FaGlobeAsia className="text-gray-500 mr-2" />
+                  <input
+                    type="number"
+                    id="latitude_field"
+                    step="any"
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value)}
+                    required
+                    className="w-full dark:text-black bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+              <div className="w-1/2">
+                <label
+                  htmlFor="longitude_field"
+                  className="block text-sm text-gray-700 mb-1"
+                >
+                  Longitude
+                </label>
+                <div className={inputWrapper}>
+                  <FaGlobe className="text-gray-500 mr-2" />
+                  <input
+                    type="number"
+                    id="longitude_field"
+                    step="any"
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value)}
+                    required
+                    className="w-full dark:text-black bg-transparent outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="country_field"
+                className="block text-sm text-gray-700 mb-1"
+              >
+                Country
+              </label>
               <select
                 id="country_field"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 required
-                className="block w-72 py-2.3 px-0 text-sm text-black bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                className="w-full dark:text-black px-4 py-2 border border-gray-300 rounded-[5px] bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="" disabled>
                   Select Country
                 </option>
                 {countryList.map((c, i) => (
-                  <option key={i} value={c.name}>
+                  <option key={i} value={c.name} className="dark:text-black">
                     {c.name}
                   </option>
                 ))}
               </select>
-              <label
-                htmlFor="country_field"
-                className="absolute text-sm font-inter text-black duration-300 transform -translate-y-6 scale-75 top-0 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Country
-              </label>
             </div>
 
-            {/* Use My Location Button */}
-            <button
-              type="button"
-              onClick={() => {
-                if (navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                      const lat = pos.coords.latitude;
-                      const lon = pos.coords.longitude;
-                      setLatitude(lat);
-                      setLongitude(lon);
-                      fetchLocationDetails(lat, lon);
-                      toast.success("Current location updated", {
-                        position: "bottom-center",
-                      });
-                    },
-                    () => {
-                      toast.error("Location permission denied", {
-                        position: "bottom-center",
-                      });
-                    }
-                  );
-                } else {
-                  toast.error("Geolocation not supported");
-                }
-              }}
-              className="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              Use My Current Location
-            </button>
-
-            <button
-              id="shipping_btn"
-              type="submit"
-              className="w-full text-white flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 bg-blue-600 hover:bg-blue-700 rounded"
-            >
-              continue
-              <FaArrowRightLong />
-            </button>
+            <div className="flex gap-4 mt-4 mb-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lon = pos.coords.longitude;
+                        setLatitude(lat);
+                        setLongitude(lon);
+                        fetchLocationDetails(lat, lon);
+                        toast.success("Current location updated", {
+                          position: "bottom-center",
+                        });
+                      },
+                      () => {
+                        toast.error("Location permission denied", {
+                          position: "bottom-center",
+                        });
+                      }
+                    );
+                  } else {
+                    toast.error("Geolocation not supported");
+                  }
+                }}
+                className="w-1/2 px-4 py-2 bg-green-600 text-white rounded-[5px] hover:bg-green-700 transition"
+              >
+                Use Location
+              </button>
+              <button
+                id="shipping_btn"
+                type="submit"
+                className="w-1/2 flex items-center justify-center gap-2 text-white text-[16px] px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-[5px] transition"
+              >
+                Continue <FaArrowRight />
+              </button>
+            </div>
           </form>
         </div>
       </div>

@@ -19,21 +19,21 @@ function ProductCard(props) {
   };
 
   return (
-    <div className="productCard text-center w-60 overflow-hidden max-h-full p-2 bg-white shadow-gray-950 border border-orange-500">
+    <div className="productCard text-center w-60 overflow-hidden max-h-full p-2 bg-white dark:bg-gray-500 shadow-gray-950 border border-orange-500 dark:border-gray-100">
       <img className="w-full h-52 object-cover" src={props.image} alt="" />
       <div className="product mt-2">
-        <p className="product_price font-futura text-lg font-bold">
+        <p className="product_price font-futura text-lg font-bold dark:text-black">
           ₹{props.disc_price}
-          <span className="line-through text-gray-500 ml-2 font-medium text-base">
+          <span className="line-through text-gray-500 dark:text-white ml-2 font-medium text-base">
             ₹{props.price}
           </span>
         </p>
-        <p className="product_name font-futura text-gray-800 hover:text-orange-500">
+        <p className="product_name font-futura text-gray-800 dark:text-black dark:hover:text-white hover:text-orange-500">
           {props.name}
         </p>
         <div className="ratings mt-2 flex justify-center items-center gap-1">
           {getStars()}
-          <span id="no_of_reviews" className="text-gray-700 text-sm ml-1">
+          <span id="no_of_reviews" className="text-gray-700 text-sm ml-1 dark:text-gray-100">
             ({props.reviews} Reviews)
           </span>
         </div>

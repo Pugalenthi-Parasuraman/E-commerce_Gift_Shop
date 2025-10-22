@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineLock } from "react-icons/ai";
-import { useEffect, useState } from "react";
 import {
   updatePassword as updatePasswordAction,
   clearAuthError,
@@ -12,6 +11,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 function PasswordUpdate() {
   const [password, setPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
   const dispatch = useDispatch();
   const { isUpdated, error } = useSelector((state) => state.authState);
 
@@ -31,7 +31,6 @@ function PasswordUpdate() {
       });
       setOldPassword("");
       setPassword("");
-      return;
     }
     if (error) {
       toast(error, {
@@ -41,59 +40,75 @@ function PasswordUpdate() {
           dispatch(clearAuthError);
         },
       });
-      return;
     }
   }, [isUpdated, error, dispatch]);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   return (
-    <div className="text-white h-[100vh] flex justify-center items-center bg-cover">
-      <form
-        onSubmit={submitHandler}
-        className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative"
-      >
-        <h1 className="text-4xl text-white font-bold text-center mb-6">
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 rounded-sm shadow-md p-8 w-96 relative">
+        {/* Toggle Switch same as Login Page */}
+        <div className="absolute top-6 right-6">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+              className="sr-only peer"
+            />
+            <div className="w-10 h-5 bg-gray-300 rounded-full peer-checked:bg-gray-600 transition-colors duration-300"></div>
+            <div className="absolute top-[4px] left-[4px] w-3 h-3 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-5"></div>
+          </label>
+        </div>
+
+        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">
           Update Password
         </h1>
 
-        <div className="relative my-9">
-          <input
-            type="password"
-            id="old_password"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-          />
-          <label
-            htmlFor="old_password"
-            className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        <form onSubmit={submitHandler} className="space-y-6">
+          {/* Old Password */}
+          <div className="relative">
+            <input
+              type="password"
+              id="old_password"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              placeholder="Old Password"
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+            />
+            <AiOutlineLock className="absolute right-4 top-3 text-gray-500 dark:text-gray-300" />
+          </div>
+
+          {/* New Password */}
+          <div className="relative">
+            <input
+              type="password"
+              id="NewPassword"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="New Password"
+              className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+            />
+            <AiOutlineLock className="absolute right-4 top-3 text-gray-500 dark:text-gray-300" />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full flex items-center justify-between py-3 px-4 bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm rounded-lg transition duration-200"
           >
-            Old Password
-          </label>
-          <AiOutlineLock className="absolute top-0 right-4" />
-        </div>
-        <div className="relative my-6">
-          <input
-            type="password"
-            id="NewPassword"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-          />
-          <label
-            htmlFor="NewPassword"
-            className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            New Password
-          </label>
-          <AiOutlineLock className="absolute top-0 right-4" />
-        </div>
-        <button
-          type="submit"
-          className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
-        >
-          Update Password
-          <FaArrowRightLong />
-        </button>
-      </form>
+            Update Password
+            <FaArrowRightLong />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

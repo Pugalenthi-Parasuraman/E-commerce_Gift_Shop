@@ -2,8 +2,8 @@ const catchAsyncError = require("../middlewares/catchAsnycErrors");
 const Razorpay = require("razorpay");
 
 const razorpay = new Razorpay({
-  key_id: "Your_Key_id",
-  key_secret: "Your_Secret_Key_id",
+  key_id: "rzp_test_RGKd3yBRFMVNEI",
+  key_secret: "P71gzLwzG2sXhx7xV7DnhInP",
 });
 
 const processPayment = catchAsyncError(async (req, res, next) => {
@@ -43,7 +43,7 @@ const processPayment = catchAsyncError(async (req, res, next) => {
 
 const sendRazorpayApi = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
-    razorpayApiKey: "rzp_test_VBQSaYdZ0LK5WN",
+    razorpayApiKey: "rzp_test_RGKd3yBRFMVNEI",
   });
 });
 

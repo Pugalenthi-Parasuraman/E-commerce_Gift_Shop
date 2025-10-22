@@ -144,7 +144,6 @@ const LiveLocationPage = () => {
     points.push(delivery);
   }
 
-  // Format timestamp
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return null;
     const date = new Date(timestamp);
@@ -156,12 +155,12 @@ const LiveLocationPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h1 className="text-2xl font-bold mb-2">
+      <div className="bg-white rounded-sm shadow-md p-6 mb-6">
+        <h1 className="text-2xl font-bold mb-2 dark:text-gray-900">
           Order #
           {order?.customOrderId || `ORD-${order?._id?.slice(-6).toUpperCase()}`}
         </h1>
-        <p className="text-gray-600 mb-2">
+        <p className="text-gray-600 mb-2 dark:text-gray-900">
           Tracking Number: {order?.trackingNumber || "N/A"}
         </p>
         {isTracking && liveLocation?.timestamp && (
@@ -171,7 +170,9 @@ const LiveLocationPage = () => {
         )}
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-lg font-semibold mb-2">Current Status</h2>
+            <h2 className="text-lg font-semibold dark:text-gray-900 mb-2">
+              Current Status
+            </h2>
             <span
               className={`px-4 py-2 rounded-md inline-block ${
                 order?.orderStatus === "Delivered"
@@ -197,8 +198,20 @@ const LiveLocationPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Live Location Map</h2>
+      <div className="bg-white rounded-sm shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4 dark:text-gray-900">
+          Live Location Map
+        </h2>
+
+        {/* 👇 Greetings Message (Processing Status Only) */}
+        {order?.orderStatus === "Processing" &&
+          order?.shippingInfo?.city &&
+          isValidCoords(delivery) && (
+            <p className="text-blue-600 font-semibold mb-4 dark:text-gray-900 text-center">
+              🚚 Greetings from Chennai to {order.shippingInfo.city}!
+            </p>
+          )}
+
         <div className="h-96 rounded overflow-hidden relative">
           <MapContainer
             center={center}

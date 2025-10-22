@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineLock } from "react-icons/ai";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPassword, clearAuthError } from "../../actions/userActions";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,6 +9,7 @@ import { toast } from "react-toastify";
 function PasswordReset() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [darkMode, setDarkMode] = useState(true);
   const dispatch = useDispatch();
   const { isAuthenticated, error } = useSelector((state) => state.authState);
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ function PasswordReset() {
     const formData = new FormData();
     formData.append("password", password);
     formData.append("confirmPassword", confirmPassword);
-
     dispatch(resetPassword(formData, token));
   };
 
@@ -46,55 +45,91 @@ function PasswordReset() {
   }, [isAuthenticated, error, dispatch, navigate]);
 
   return (
-    <div className="text-white h-[100vh] flex justify-center items-center bg-cover">
-      <form
-        onSubmit={submitHandler}
-        className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative"
+    <div
+      className={`h-screen flex justify-center items-center transition-colors duration-500 ${
+        darkMode ? "bg-gray-900" : "bg-gray-100"
+      }`}
+    >
+      <div
+        className={`w-full max-w-md rounded-sm shadow-lg border p-6 sm:p-8 ${
+          darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+        }`}
       >
-        <h1 className="text-4xl text-white font-bold text-center mb-6">
-          New Password
+        {/* Dark/Light Toggle inside box */}
+        <div className="flex justify-end mb-4">
+          <div
+            className={`w-14 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+              darkMode ? "bg-gray-600" : "bg-gray-300"
+            }`}
+            onClick={() => setDarkMode(!darkMode)}
+          >
+            <div
+              className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300 ${
+                darkMode ? "translate-x-7" : "translate-x-0"
+              }`}
+            ></div>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Reset Your Password
         </h1>
 
-        <div className="relative my-9">
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-          />
-          <label
-            htmlFor="password"
-            className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+        {/* Form */}
+        <form onSubmit={submitHandler} className="space-y-5">
+          {/* Password Field with Icon */}
+          <div className="relative">
+            <AiOutlineLock
+              className={`absolute left-3 top-3 text-lg ${
+                darkMode ? "text-gray-300" : "text-gray-500"
+              }`}
+            />
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="New Password"
+              className={`pl-10 pr-3 py-2 rounded-md border w-full focus:outline-none focus:ring-2 text-sm ${
+                darkMode
+                  ? "bg-gray-700 border-gray-500 text-white focus:ring-white"
+                  : "bg-gray-100 border-gray-300 text-gray-900 focus:ring-gray-900"
+              }`}
+            />
+          </div>
+
+          {/* Confirm Password Field with Icon */}
+          <div className="relative">
+            <AiOutlineLock
+              className={`absolute left-3 top-3 text-lg ${
+                darkMode ? "text-gray-300" : "text-gray-500"
+              }`}
+            />
+            <input
+              type="password"
+              id="ConfirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm Password"
+              className={`pl-10 pr-3 py-2 rounded-md border w-full focus:outline-none focus:ring-2 text-sm ${
+                darkMode
+                  ? "bg-gray-700 border-gray-500 text-white focus:ring-white"
+                  : "bg-gray-100 border-gray-300 text-gray-900 focus:ring-gray-900"
+              }`}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 text-base font-medium bg-violet-600 text-white rounded-md hover:bg-violet-700 transition-colors duration-300"
           >
-            Password
-          </label>
-          <AiOutlineLock className="absolute top-0 right-4" />
-        </div>
-        <div className="relative my-6">
-          <input
-            type="password"
-            id="ConfirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-          />
-          <label
-            htmlFor="ConfirmPassword"
-            className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
-            Confirm Password
-          </label>
-          <AiOutlineLock className="absolute top-0 right-4" />
-        </div>
-        <button
-          type="submit"
-          className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
-        >
-          Update Password
-          <FaArrowRightLong />
-        </button>
-      </form>
+            Update Password
+            <FaArrowRightLong />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

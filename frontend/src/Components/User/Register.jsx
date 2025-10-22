@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { register, clearAuthError } from "../../actions/userActions";
 import { BiUser } from "react-icons/bi";
-import { AiOutlineLock } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { MdDriveFolderUpload } from "react-icons/md";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import MetaData from "../Reausable/Topnavbar/MetaData";
 
 function Register() {
   const [userData, setUserData] = useState({
@@ -15,10 +15,15 @@ function Register() {
     email: "",
     password: "",
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState("");
   const [avatarPreview, setAvatarPreview] = useState(
     "/images/default_avatar.png"
   );
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, isAuthenticated } = useSelector(
@@ -42,160 +47,198 @@ function Register() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    if (userData.password !== confirmPassword) {
+      toast("Passwords do not match", {
+        position: "bottom-center",
+        type: "error",
+      });
+      return;
+    }
     const formData = new FormData();
     formData.append("name", userData.name);
     formData.append("email", userData.email);
     formData.append("password", userData.password);
     formData.append("avatar", avatar);
-    dispatch(register(formData))
-      .then(() => console.log("API Call Successful"))
-      .catch((err) => console.error("API Error:", err));
+    dispatch(register(formData));
   };
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
-      return;
     }
-
     if (error) {
       toast(error, {
         position: "bottom-center",
         type: "error",
-        onOpen: () => {
-          dispatch(clearAuthError);
-        },
+        onOpen: () => dispatch(clearAuthError),
       });
-      return;
     }
   }, [isAuthenticated, error, dispatch, navigate]);
 
   return (
-    <div className="text-white h-[100vh] flex justify-center items-center bg-cover">
-      <form
-        onSubmit={submitHandler}
-        encType="multipart/form-data"
-        className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative"
-      >
-        <h1 className="text-4xl text-white font-bold text-center mb-6">
-          Register
-        </h1>
-        <h1 className="text-xl text-white font-semibold text-center mb-6">
-          🎉 Join us!
-        </h1>
-        <div>
-          <div className="relative my-6">
-            <input
-              type="name"
-              id="name"
-              name="name"
-              onChange={onChange}
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
-            />
-            <label
-              htmlFor="name"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
+    <Fragment>
+      <MetaData title={`Register`} />
+      <div className={`${isDark ? "dark" : ""}`}>
+        <div className="h-screen flex justify-center items-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+          <form
+            onSubmit={submitHandler}
+            encType="multipart/form-data"
+            className="relative max-w-[500px] px-8 py-6 rounded-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-200 shadow-lg w-full"
+          >
+            {/* Violet Left-to-Right Toggle Switch */}
+            <div
+              onClick={() => setIsDark(!isDark)}
+              className={`absolute top-4 right-4 w-14 h-7 flex items-center rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+                isDark ? "bg-gray-600" : "bg-gray-300"
+              }`}
             >
-              Name
-            </label>
-            <BiUser className="absolute top-0 right-4" />
-          </div>
-          <div className="relative my-6">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              onChange={onChange}
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
-            />
-            <label
-              htmlFor="email"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 "
-            >
-              Email
-            </label>
-            <BiUser className="absolute top-0 right-4" />
-          </div>
-          <div className="relative my-6">
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={onChange}
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
-            />
-            <label
-              htmlFor="password"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Password
-            </label>
-            <AiOutlineLock className="absolute top-0 right-4" />
-          </div>
-          <div className="relative my-6">
-            <input
-              type="password"
-              id="Confirmpwd"
-              name="confirmpwd"
-              className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus-text-white focus:border-blur-600 peer"
-              placeholder=""
-            />
-            <label
-              htmlFor="Confirmpwd"
-              className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Confirm Password
-            </label>
-            <AiOutlineLock className="absolute top-0 right-4" />
-          </div>
-          <div className="relative my-6">
-            <span className="flex gap-3 items-center">
-              <figure className="inline-block w-15 py-2.3 px-0 text-sm text-white bg-transparent appearance-none focus:outline-none focus-text-white peer">
-                <img
-                  src={avatarPreview}
-                  alt=""
-                  className="w-12 h-12 object-cover-f rounded-full"
+              <div
+                className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                  isDark ? "translate-x-7" : "translate-x-0"
+                }`}
+              ></div>
+            </div>
+
+            <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">
+              Register
+            </h1>
+            <p className="text-sm text-center text-gray-500 dark:text-gray-300 mt-2 mb-4">
+              🎉 Join us! Create your account.
+            </p>
+
+            {/* Name */}
+            <div className="flex flex-col mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                Name
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  value={userData.name}
+                  onChange={onChange}
+                  placeholder="Enter your name"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
                 />
-              </figure>
-              <input
-                type="file"
-                id="myfile"
-                name="avatar"
-                onChange={onChange}
-                className="block w-72 py-2.3 px-0 text-sm text-white bg-transparent appearance-none focus:outline-none focus-text-white peer"
-                placeholder=""
-              />
-              <label
-                htmlFor="myfile"
-                className="absolute text-sm font-inter text-white duration-300 transform -translate-y-6 scale-75 top-0 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:text-base peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
+                <BiUser className="absolute right-3 top-3 text-gray-400 dark:text-gray-300" />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="flex flex-col mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                Email
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  value={userData.email}
+                  onChange={onChange}
+                  placeholder="Enter your email"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+                />
+                <BiUser className="absolute right-3 top-3 text-gray-400 dark:text-gray-300" />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={userData.password}
+                  onChange={onChange}
+                  placeholder="Enter your password"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 dark:text-gray-300"
+                >
+                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="flex flex-col mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmpwd"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter password"
+                  className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100 rounded-md p-3 pr-10 text-gray-800 dark:text-white text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-3 text-gray-400 dark:text-gray-300"
+                >
+                  {showConfirmPassword ? (
+                    <AiOutlineEyeInvisible />
+                  ) : (
+                    <AiOutlineEye />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Avatar Upload */}
+            <div className="flex flex-col mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 Avatar
               </label>
-              <MdDriveFolderUpload className="absolute top-0 right-4" />
-            </span>
-          </div>
-          <button
-            type="submit"
-            className="w-full flex items-center justify-between mb-4 text-[18px] text-start px-2 mt-6 border-0 border-b-2 border-gray-300 appearance-none dark:focus:border-blue-500 focus:outline-none focus-text-white focus:border-blur-600 bg-blue-600 duration-300"
-            disabled={loading}
-          >
-            Continue
-            <FaArrowRightLong />
-          </button>
-          <div className="text-center">
-            <span className="m-4">
+              <div className="flex items-center gap-4 mt-1">
+                <img
+                  src={avatarPreview}
+                  alt="Avatar Preview"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <input
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                  onChange={onChange}
+                  className="text-sm text-gray-700 dark:text-gray-300"
+                />
+                <MdDriveFolderUpload className="text-xl text-gray-400 dark:text-gray-300" />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-violet-500 hover:bg-violet-600 text-white font-semibold text-sm rounded-md transition duration-200"
+            >
+              Continue <FaArrowRightLong />
+            </button>
+
+            {/* Footer */}
+            <div className="mt-4 text-center text-base text-gray-500 dark:text-gray-300">
               Already have an account?
-              <Link to="/login" className="text-blue-500">
+              <Link
+                to="/login"
+                className="ml-1 text-violet-500 hover:underline"
+              >
                 Click!
               </Link>
-            </span>
-          </div>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </div>
+    </Fragment>
   );
 }
 

@@ -16,6 +16,7 @@ import { MessageCircleMore } from "lucide-react";
 export const Menus = [
   {
     name: "Home",
+    link: "/",
   },
   {
     name: "Shop",
